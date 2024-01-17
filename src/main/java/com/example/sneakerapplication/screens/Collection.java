@@ -2,6 +2,8 @@ package com.example.sneakerapplication.screens;
 
 import com.example.sneakerapplication.Application;
 import com.example.sneakerapplication.MySQLConnector;
+import com.example.sneakerapplication.classes.Brand;
+import com.example.sneakerapplication.classes.Model;
 import com.example.sneakerapplication.classes.Sneaker;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -84,7 +86,7 @@ public class Collection {
 
         if (active) {
             ImageView arrow = new ImageView();
-            arrow.setFitWidth(30);
+            arrow.setFitWidth(25);
             arrow.setPreserveRatio(true);
             arrow.setImage(new Image(Application.class.getResource("images/arrow_right.png").toString()));
             navItem.getChildren().add(arrow);
@@ -93,7 +95,7 @@ public class Collection {
         return navItem;
     }
 
-    public FlowPane generateSneakerItem(Sneaker sneaker) {
+    public FlowPane generateSneakerItem(Sneaker sneaker, Model model, Brand brand) {
         FlowPane sneakerItem = new FlowPane();
         sneakerItem.setOrientation(Orientation.HORIZONTAL);
         sneakerItem.setMaxSize(200, 250);
@@ -114,10 +116,10 @@ public class Collection {
         sneakerInfo.setOrientation(Orientation.VERTICAL);
         sneakerInfo.setPrefSize(200, 110);
 
-        Text brand_id = new Text("Brand: " + sneaker.getModel_id());
+        Text brand_id = new Text("Brand: " + brand.getBrand());
         brand_id.setId("brand_id");
 
-        Text model_id = new Text("Model: " + sneaker.getModel_id());
+        Text model_id = new Text("Model: " + model.getModel());
         model_id.setId("model_id");
 
         Text size = new Text("Size: " + sneaker.getSize());
@@ -141,8 +143,12 @@ public class Collection {
 
         private void getSneakers() {
             try {
-                ResultSet sneaker1 = Application.connection.query("SELECT * FROM sneaker WHERE user_id = 1;");
-                while (sneaker1.next()) sneakers.getChildren().add(generateSneakerItem(new Sneaker(sneaker1)));
+                ResultSet sneakerResult = Application.connection.query("SELECT * " +
+                        "FROM sneaker s " +
+                        "JOIN model m ON s.model_id = m.model_id " +
+                        "JOIN brand b ON m.brand_id = b.brand_id " +
+                        "JOIN user u ON s.user_id = u.user_id ");
+                while (sneakerResult.next()) sneakers.getChildren().add(generateSneakerItem(new Sneaker(sneakerResult), new Model(sneakerResult), new Brand(sneakerResult)));
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
