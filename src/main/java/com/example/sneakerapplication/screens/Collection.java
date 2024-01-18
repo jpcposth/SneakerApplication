@@ -1,23 +1,20 @@
 package com.example.sneakerapplication.screens;
 
 import com.example.sneakerapplication.Application;
-import com.example.sneakerapplication.MySQLConnector;
 import com.example.sneakerapplication.classes.Brand;
 import com.example.sneakerapplication.classes.Model;
 import com.example.sneakerapplication.classes.Sneaker;
+import com.example.sneakerapplication.classes.User;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 import java.sql.ResultSet;
@@ -68,7 +65,6 @@ public class Collection {
                 generateNavItem("Collection", true),
                 generateNavItem("Add", false),
                 generateNavItem("Statistics", false));
-
         return navBar;
     }
 
@@ -104,12 +100,14 @@ public class Collection {
 
         Pane sneakerImage = new Pane();
         sneakerImage.setPrefSize(200, 200);
-        sneakerImage.setStyle(
-                "-fx-background-image: url(" + sneaker.getImage() + ");" +
-                "-fx-background-size: contain;" +
-                "-fx-background-repeat: no-repeat;" +
-                    "-fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 20, 0, 0.0, 0.0);"
-        );
+        ImageView sneakerImageView = new ImageView();
+        sneakerImageView.setImage(new Image(sneaker.getImage()));
+        sneakerImageView.setFitHeight(200);
+        sneakerImageView.setFitWidth(200);
+
+
+        sneakerImage.getChildren().add(sneakerImageView);
+
 
         FlowPane sneakerInfo = new FlowPane();
         sneakerInfo.setStyle("-fx-background-color: lightblue;");
@@ -137,25 +135,41 @@ public class Collection {
         sneakerInfo.getChildren().addAll(brand_id, model_id, size, release_date, purchase_date, price);
         sneakerItem.getChildren().addAll(sneakerImage, sneakerInfo);
 
-
         return sneakerItem;
     }
 
-        private void getSneakers() {
-            try {
-                ResultSet sneakerResult = Application.connection.query("SELECT * " +
+    private void getSneakers() {
+        try {
+            User loggedInUser = Application.getLoggedInUser();
+
+            if (loggedInUser != null) {
+                String query = "SELECT * " +
                         "FROM sneaker s " +
                         "JOIN model m ON s.model_id = m.model_id " +
                         "JOIN brand b ON m.brand_id = b.brand_id " +
-                        "JOIN user u ON s.user_id = u.user_id ");
-                while (sneakerResult.next()) sneakers.getChildren().add(generateSneakerItem(new Sneaker(sneakerResult), new Model(sneakerResult), new Brand(sneakerResult)));
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
+                        "WHERE s.user_id = ?";
+
+
+                ResultSet sneakerResult = Application.connection.query(query, loggedInUser.getUser_id());
+
+                while (sneakerResult.next()) {
+                    Sneaker sneaker = new Sneaker(sneakerResult);
+                    Model model = new Model(sneakerResult);
+                    Brand brand = new Brand(sneakerResult);
+
+                    Node sneakerItem = generateSneakerItem(sneaker, model, brand);
+
+                    if (!sneakers.getChildren().contains(sneakerItem)) {
+                        sneakers.getChildren().add(sneakerItem);
+                    }
+                }
+                sneakerSection.getChildren().setAll(sneakers);
             }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-
-
-        public Scene getScene() {
-            return collectionScene;
-        }
+    }
+    public Scene getCollectionScene() {
+        return collectionScene;
+    }
 }

@@ -33,6 +33,7 @@ public class MySQLConnector {
         }
     }
 
+
     public ResultSet query(String query) throws SQLException {
         if (this.connection == null)
             this.addConnection();
@@ -40,5 +41,12 @@ public class MySQLConnector {
         Statement statement = this.connection.createStatement();
         return statement.executeQuery(query);
     }
+
+    public ResultSet query(String query, String userId) throws SQLException {
+        PreparedStatement statement = this.connection.prepareStatement(query);
+        statement.setString(1, userId);
+        return statement.executeQuery();
+        }
 }
+
 

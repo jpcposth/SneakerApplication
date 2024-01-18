@@ -1,7 +1,7 @@
 package com.example.sneakerapplication;
 
-import com.example.sneakerapplication.classes.Sneaker;
-import com.example.sneakerapplication.screens.Collection;
+import com.example.sneakerapplication.classes.User;
+import com.example.sneakerapplication.screens.Login;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
@@ -10,6 +10,13 @@ import java.util.HashMap;
 
 
 public class Application extends javafx.application.Application {
+    public static User getLoggedInUser() {
+        return loggedInUser;
+    }
+    private static User loggedInUser;
+    public static void setUser(User user) {
+        loggedInUser = user;
+    }
     public static Stage mainStage;
     public static HashMap<String, Scene> scenes = new HashMap<>();
     public static MySQLConnector connection;
@@ -19,7 +26,8 @@ public class Application extends javafx.application.Application {
     public void start(Stage stage) throws IOException {
         connection = new MySQLConnector("127.0.0.1", "3306", "sneaker_app", "root", "");
 
-        scenes.put("Collection", new Collection().getScene());
+        scenes.put("Login", new Login().getScene());
+//        scenes.put("Collection", new Collection().getScene());
 
         mainStage = stage;
 
@@ -27,9 +35,9 @@ public class Application extends javafx.application.Application {
         mainStage.setHeight(applicationSize[1]);
         mainStage.setResizable(true );
 //        mainStage.setFullScreen(true);
-        mainStage.setTitle("Collection");
+        mainStage.setTitle("Sneakers");
 
-        mainStage.setScene(scenes.get("Collection"));
+        mainStage.setScene(scenes.get("Login"));
         mainStage.show();
     }
 
