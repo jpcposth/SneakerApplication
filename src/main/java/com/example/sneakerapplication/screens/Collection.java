@@ -11,6 +11,7 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
@@ -19,6 +20,8 @@ import javafx.scene.text.Text;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import static com.example.sneakerapplication.Application.scenes;
 
 public class Collection {
     private Scene collectionScene;
@@ -34,7 +37,7 @@ public class Collection {
         sneakerSection = new FlowPane();
         sneakerSection.setPrefSize(Application.applicationSize[0] - 165, Application.applicationSize[1] - 60);
         sneakerSection.setPadding(new Insets(80, 20, 20, 20));
-        sneakerSection.relocate(165, 40);
+        sneakerSection.relocate(getNavBar().getPrefWidth(), 0);
         sneakerSection.setVgap(20);
 
         sneakers = new FlowPane();
@@ -58,34 +61,37 @@ public class Collection {
         FlowPane navBar = new FlowPane();
         navBar.setId("navbar");
         navBar.setOrientation(Orientation.HORIZONTAL);
-        navBar.setPrefSize(165, Application.applicationSize[1]);
+        navBar.setPrefSize(250, Application.applicationSize[1]);
         navBar.setPadding(new Insets(80, 0, 0, 0));
+
         navBar.getChildren().addAll(
-                generateNavItem("Collection", true),
-                generateNavItem("Add", false),
-                generateNavItem("Statistics", false));
+                generateNavItem("Collection", true, null),
+                generateNavItem("Add", false, this::showAdd),
+                generateNavItem("Statistics", false, null));
+
         return navBar;
     }
 
-    private FlowPane generateNavItem(String title, boolean active) {
+    private FlowPane generateNavItem(String title, boolean active, Runnable onClick) {
         FlowPane navItem = new FlowPane();
+        navItem.setId("nav_item");
         navItem.setPadding(new Insets(0, 0, 0, 20));
         navItem.setAlignment(Pos.CENTER_LEFT);
-        navItem.setPrefSize(165, 35);
+        navItem.setPrefSize(250, 35);
         navItem.setHgap(40);
 
         Text navItemText = new Text(title);
         navItemText.setId("nav_item_text");
-        navItemText.setStyle((active ? "-fx-fill: #3375CC;" : "-fx-fill: #FFFFFF;"));
         navItem.getChildren().addAll(navItemText);
 
+
         if (active) {
-            ImageView arrow = new ImageView();
-            arrow.setFitWidth(25);
-            arrow.setPreserveRatio(true);
-            arrow.setImage(new Image(Application.class.getResource("images/arrow_right.png").toString()));
-            navItem.getChildren().add(arrow);
+            navItem.getStyleClass().add("active");
+        } else {
+            navItem.getStyleClass().add("inactive");
         }
+
+        navItem.setOnMouseClicked(event -> onClick.run());
 
         return navItem;
     }
@@ -170,5 +176,9 @@ public class Collection {
     }
     public Scene getCollectionScene() {
         return collectionScene;
+    }
+    private void showAdd() {
+        scenes.put("Add", new Add().getAddScene());
+        Application.mainStage.setScene(scenes.get("Add"));
     }
 }
