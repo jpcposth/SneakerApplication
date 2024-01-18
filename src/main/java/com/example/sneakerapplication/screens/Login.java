@@ -9,7 +9,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import java.sql.ResultSet;
@@ -22,8 +22,11 @@ public class Login {
     private Scene loginScene;
 
     public Login() {
-        Pane root = new Pane();
-//        root.setAlignment(Pos.CENTER);
+        HBox root = new HBox();
+        root.setId("login-root");
+        root.setFillHeight(false);
+        root.setAlignment(Pos.CENTER);
+
         VBox container = new VBox(20);
         container.setAlignment(Pos.CENTER);
         container.setPadding(new Insets(50));
@@ -32,13 +35,16 @@ public class Login {
         TextField usernameField = new TextField();
         usernameField.setPromptText("Username");
         usernameField.setId("username-field");
+        usernameField.setPrefWidth(200);
 
         PasswordField passwordField = new PasswordField();
         passwordField.setPromptText("Password");
         passwordField.setId("password-field");
+        passwordField.setPrefWidth(200);
 
         Button loginButton = new Button("Log in");
         loginButton.setId("login-button");
+        loginButton.setPrefWidth(200);
         loginButton.setOnAction(e -> {
             if (isValidCredentials(usernameField.getText(), passwordField.getText())) {
                 showCollection();
@@ -52,6 +58,7 @@ public class Login {
         loginScene = new Scene(root, 300, 200);
         loginScene.getStylesheets().add(Application.class.getResource("stylesheets/login.css").toString());
     }
+
 
     private boolean isValidCredentials(String username, String password) {
         if (username.isEmpty() || password.isEmpty()) {

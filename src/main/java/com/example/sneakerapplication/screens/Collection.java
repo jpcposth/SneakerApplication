@@ -25,36 +25,35 @@ public class Collection {
     private FlowPane sneakerSection, sneakers;
     private Sneaker sneaker;
 
-        public Collection() {
-            Pane container = new Pane();
-            container.setId("container");
+    public Collection() {
+        Pane container = new Pane();
+        container.setId("container");
 
-            sneaker = new Sneaker("", "", "", "", "", "", "", "");
+        sneaker = new Sneaker("", "", "", "", "", "", "", "");
 
-            sneakerSection = new FlowPane();
-            sneakerSection.setPrefSize(Application.applicationSize[0] - 165, Application.applicationSize[1] - 60);
-            sneakerSection.setPadding(new Insets(80, 20, 20, 20));
-            sneakerSection.relocate(165, 40);
-            sneakerSection.setVgap(20);
+        sneakerSection = new FlowPane();
+        sneakerSection.setPrefSize(Application.applicationSize[0] - 165, Application.applicationSize[1] - 60);
+        sneakerSection.setPadding(new Insets(80, 20, 20, 20));
+        sneakerSection.relocate(165, 40);
+        sneakerSection.setVgap(20);
 
-            sneakers = new FlowPane();
-            sneakers.setPrefSize(sneakerSection.getPrefWidth() - 40, sneakerSection.getPrefHeight());
-            sneakers.setHgap(40);
-            sneakers.setVgap(20);
-
-
-            sneakerSection.getChildren().addAll(sneakers);
-
-            container.getChildren().addAll(getNavBar(), sneakerSection);
+        sneakers = new FlowPane();
+        sneakers.setPrefSize(sneakerSection.getPrefWidth() - 40, sneakerSection.getPrefHeight());
+        sneakers.setHgap(40);
+        sneakers.setVgap(20);
 
 
-            collectionScene = new Scene(container);
-            collectionScene.getStylesheets().add(Application.class.getResource("stylesheets/collection.css").toString());
+        sneakerSection.getChildren().addAll(sneakers);
+
+        container.getChildren().addAll(getNavBar(), sneakerSection);
 
 
-            Platform.runLater(this::getSneakers);
-        }
+        collectionScene = new Scene(container);
+        collectionScene.getStylesheets().add(Application.class.getResource("stylesheets/collection.css").toString());
 
+
+        Platform.runLater(this::getSneakers);
+    }
     private Pane getNavBar() {
         FlowPane navBar = new FlowPane();
         navBar.setId("navbar");
@@ -70,13 +69,13 @@ public class Collection {
 
     private FlowPane generateNavItem(String title, boolean active) {
         FlowPane navItem = new FlowPane();
-        navItem.setStyle(active ? "-fx-background-color: #F7F7F7;" : "");
         navItem.setPadding(new Insets(0, 0, 0, 20));
         navItem.setAlignment(Pos.CENTER_LEFT);
         navItem.setPrefSize(165, 35);
         navItem.setHgap(40);
 
         Text navItemText = new Text(title);
+        navItemText.setId("nav_item_text");
         navItemText.setStyle((active ? "-fx-fill: #3375CC;" : "-fx-fill: #FFFFFF;"));
         navItem.getChildren().addAll(navItemText);
 
@@ -94,16 +93,16 @@ public class Collection {
     public FlowPane generateSneakerItem(Sneaker sneaker, Model model, Brand brand) {
         FlowPane sneakerItem = new FlowPane();
         sneakerItem.setOrientation(Orientation.HORIZONTAL);
-        sneakerItem.setMaxSize(200, 250);
+        sneakerItem.setMaxSize(250, 350);
         sneakerItem.setVgap(15);
         sneakerItem.setStyle("-fx-background-color: pink;");
 
         Pane sneakerImage = new Pane();
-        sneakerImage.setPrefSize(200, 200);
+        sneakerImage.setPrefSize(250, 250);
         ImageView sneakerImageView = new ImageView();
         sneakerImageView.setImage(new Image(sneaker.getImage()));
-        sneakerImageView.setFitHeight(200);
-        sneakerImageView.setFitWidth(200);
+        sneakerImageView.setFitHeight(250);
+        sneakerImageView.setFitWidth(250);
 
 
         sneakerImage.getChildren().add(sneakerImageView);
@@ -112,7 +111,7 @@ public class Collection {
         FlowPane sneakerInfo = new FlowPane();
         sneakerInfo.setStyle("-fx-background-color: lightblue;");
         sneakerInfo.setOrientation(Orientation.VERTICAL);
-        sneakerInfo.setPrefSize(200, 110);
+        sneakerInfo.setPrefSize(250, 200);
 
         Text brand_id = new Text("Brand: " + brand.getBrand());
         brand_id.setId("brand_id");
