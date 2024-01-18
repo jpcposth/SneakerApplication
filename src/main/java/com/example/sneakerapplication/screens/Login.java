@@ -55,7 +55,7 @@ public class Login {
         container.getChildren().addAll(usernameField, passwordField, loginButton);
         root.getChildren().addAll(container);
 
-        loginScene = new Scene(root, 300, 200);
+        loginScene = new Scene(root);
         loginScene.getStylesheets().add(Application.class.getResource("stylesheets/login.css").toString());
     }
 
