@@ -9,8 +9,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -22,20 +22,23 @@ public class Login {
     private Scene loginScene;
 
     public Login() {
+        Pane root = new Pane();
+//        root.setAlignment(Pos.CENTER);
         VBox container = new VBox(20);
         container.setAlignment(Pos.CENTER);
         container.setPadding(new Insets(50));
-
-        Text title = new Text("Login");
-        title.setStyle("-fx-font-size: 24px;");
+        container.setId("login-container");
 
         TextField usernameField = new TextField();
         usernameField.setPromptText("Username");
+        usernameField.setId("username-field");
 
         PasswordField passwordField = new PasswordField();
         passwordField.setPromptText("Password");
+        passwordField.setId("password-field");
 
-        Button loginButton = new Button("Login");
+        Button loginButton = new Button("Log in");
+        loginButton.setId("login-button");
         loginButton.setOnAction(e -> {
             if (isValidCredentials(usernameField.getText(), passwordField.getText())) {
                 showCollection();
@@ -43,15 +46,19 @@ public class Login {
         });
 
 
-        container.getChildren().addAll(title, usernameField, passwordField, loginButton);
+        container.getChildren().addAll(usernameField, passwordField, loginButton);
+        root.getChildren().addAll(container);
 
-        loginScene = new Scene(container, 300, 200);
+        loginScene = new Scene(root, 300, 200);
         loginScene.getStylesheets().add(Application.class.getResource("stylesheets/login.css").toString());
     }
 
     private boolean isValidCredentials(String username, String password) {
         if (username.isEmpty() || password.isEmpty()) {
-            showError("Username and password are required.");
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Error");
+            alert.setHeaderText("Please fill in all fields.");
+            alert.showAndWait();
             return false;
         }
 
@@ -70,16 +77,15 @@ public class Login {
                 loggedIn = true;
                 return true;
             } else {
-                showError("Invalid username or password. Please try again.");
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Error");
+                alert.setHeaderText("Invalid username or password. Please try again.");
+                alert.showAndWait();
             }
         } catch (SQLException e) {
-            showError("An error occurred during login. Please try again.");
+            System.out.println("An error occurred during login. Please try again.");
         }
         return false;
-    }
-
-    private void showError(String message) {
-        System.out.println("Error: " + message);
     }
 
     public Scene getScene() {

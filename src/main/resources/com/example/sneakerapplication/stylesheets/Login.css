@@ -1,0 +1,23 @@
+{
+    -fx-background-color: #FFFFFF;
+}
+
+#login-container {
+    -fx-background-color: #050505;
+}
+
+#username-field, #password-field {
+    /*-fx-background-color: #F7F7F7;*/
+    -fx-text-fill: #3375CC;
+    -fx-background-color: red;
+}
+
+#login-button {
+    -fx-background-color: #3375CC;
+    -fx-text-fill: #FFFFFF;
+}
+
+#login-button:hover {
+    -fx-background-color: #295EA3;
+    -fx-text-fill: #FFFFFF;
+}

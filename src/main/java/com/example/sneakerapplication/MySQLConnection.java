@@ -3,11 +3,11 @@ package com.example.sneakerapplication;
 import java.sql.*;
 import java.util.Properties;
 
-public class MySQLConnector {
+public class MySQLConnection {
     private Connection connection;
     private final Properties properties;
 
-    public MySQLConnector(String hostname, String port, String database, String username, String password) {
+    public MySQLConnection(String hostname, String port, String database, String username, String password) {
         this.properties = new Properties();
         this.properties.setProperty("hostname", hostname);
         this.properties.setProperty("port", port);
@@ -33,7 +33,6 @@ public class MySQLConnector {
         }
     }
 
-
     public ResultSet query(String query) throws SQLException {
         if (this.connection == null)
             this.addConnection();
@@ -46,7 +45,7 @@ public class MySQLConnector {
         PreparedStatement statement = this.connection.prepareStatement(query);
         statement.setString(1, userId);
         return statement.executeQuery();
-        }
+    }
 }
 
 
