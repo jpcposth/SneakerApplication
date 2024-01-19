@@ -33,19 +33,55 @@ public class MySQLConnection {
         }
     }
 
-    public ResultSet query(String query) throws SQLException {
+    public ResultSet query(String query, Object... parameters) throws SQLException {
         if (this.connection == null)
             this.addConnection();
 
-        Statement statement = this.connection.createStatement();
-        return statement.executeQuery(query);
-    }
-
-    public ResultSet query(String query, String userId) throws SQLException {
         PreparedStatement statement = this.connection.prepareStatement(query);
-        statement.setString(1, userId);
+
+        // Set parameters for the prepared statement
+        for (int i = 0; i < parameters.length; i++) {
+            statement.setObject(i + 1, parameters[i]);
+        }
+
         return statement.executeQuery();
     }
+
+
+//    public ResultSet query(String query) throws SQLException {
+//        if (this.connection == null)
+//            this.addConnection();
+//
+//        Statement statement = this.connection.createStatement();
+//        return statement.executeQuery(query);
+//    }
+//
+//    public ResultSet query(String query, String userId) throws SQLException {
+//        PreparedStatement statement = this.connection.prepareStatement(query);
+//        statement.setString(1, userId);
+//        return statement.executeQuery();
+//    }
+
+
+
+
+
+    public void updateQuery(String query, Object... parameters) throws SQLException {
+        if (this.connection == null) {
+            this.addConnection();
+        }
+
+        try (PreparedStatement statement = this.connection.prepareStatement(query)) {
+            // Set parameters for the prepared statement
+            for (int i = 0; i < parameters.length; i++) {
+                statement.setObject(i + 1, parameters[i]);
+            }
+
+            // Execute the update query
+            statement.executeUpdate();
+        }
+    }
 }
+
 
 

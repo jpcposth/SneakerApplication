@@ -1,6 +1,7 @@
 package com.example.sneakerapplication;
 
 import com.example.sneakerapplication.classes.User;
+import com.example.sneakerapplication.screens.Add;
 import com.example.sneakerapplication.screens.Login;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -26,6 +27,8 @@ public class Application extends javafx.application.Application {
         connection = new MySQLConnection("127.0.0.1", "3306", "sneaker_app", "root", "");
 
         scenes.put("Login", new Login().getScene());
+        scenes.put("Add", new Add().getAddScene());
+//        scenes.put("Statistics", new Statistics().getStatisticsScene());
 
         mainStage = stage;
 

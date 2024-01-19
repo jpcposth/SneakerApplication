@@ -178,7 +178,6 @@ public class Collection {
         return collectionScene;
     }
     private void showAdd() {
-        scenes.put("Add", new Add().getAddScene());
         Application.mainStage.setScene(scenes.get("Add"));
     }
 }
