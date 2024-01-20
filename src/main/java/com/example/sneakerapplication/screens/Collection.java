@@ -11,7 +11,6 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
@@ -20,6 +19,8 @@ import javafx.scene.text.Text;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import static com.example.sneakerapplication.Application.scenes;
 
@@ -67,7 +68,7 @@ public class Collection {
         navBar.getChildren().addAll(
                 generateNavItem("Collection", true, null),
                 generateNavItem("Add", false, this::showAdd),
-                generateNavItem("Statistics", false, null));
+                generateNavItem("Statistics", false, this::showStatistics));
 
         return navBar;
     }
@@ -100,24 +101,23 @@ public class Collection {
         FlowPane sneakerItem = new FlowPane();
         sneakerItem.setOrientation(Orientation.HORIZONTAL);
         sneakerItem.setMaxSize(250, 350);
-        sneakerItem.setVgap(15);
-        sneakerItem.setStyle("-fx-background-color: pink;");
+//        sneakerItem.setStyle("-fx-background-color: pink;");
 
-        Pane sneakerImage = new Pane();
+        FlowPane sneakerImage = new FlowPane();
         sneakerImage.setPrefSize(250, 250);
         ImageView sneakerImageView = new ImageView();
         sneakerImageView.setImage(new Image(sneaker.getImage()));
-        sneakerImageView.setFitHeight(250);
+        sneakerImageView.setPreserveRatio(true);
         sneakerImageView.setFitWidth(250);
+
 
 
         sneakerImage.getChildren().add(sneakerImageView);
 
 
         FlowPane sneakerInfo = new FlowPane();
-        sneakerInfo.setStyle("-fx-background-color: lightblue;");
         sneakerInfo.setOrientation(Orientation.VERTICAL);
-        sneakerInfo.setPrefSize(250, 200);
+        sneakerInfo.setPrefSize(250, 150);
 
         Text brand_id = new Text("Brand: " + brand.getBrand());
         brand_id.setId("brand_id");
@@ -125,20 +125,26 @@ public class Collection {
         Text model_id = new Text("Model: " + model.getModel());
         model_id.setId("model_id");
 
-        Text size = new Text("Size: " + sneaker.getSize());
+        double sizeValue = Double.parseDouble(sneaker.getSize());
+        Text size = new Text(String.format("Size: %.1f", sizeValue));
         size.setId("size");
 
-        Text release_date = new Text("Release Date: " + sneaker.getRelease_date());
+        LocalDate releaseDate = LocalDate.parse(sneaker.getRelease_date());
+        Text release_date = new Text("Release Date: " + releaseDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         release_date.setId("release_date");
 
-        Text purchase_date = new Text("Purchase Date: " + sneaker.getPurchase_date());
+        LocalDate purchaseDate = LocalDate.parse(sneaker.getPurchase_date());
+        Text purchase_date = new Text("Purchase Date: " + purchaseDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         purchase_date.setId("purchase_date");
 
-        Text price = new Text("Price: €" + sneaker.getPrice());
+        double priceValue = Double.parseDouble(sneaker.getPrice());
+        Text price = new Text(String.format("Price: €%.2f", priceValue));
         price.setId("price");
 
         sneakerInfo.getChildren().addAll(brand_id, model_id, size, release_date, purchase_date, price);
+        sneakerInfo.setId("sneaker_info");
         sneakerItem.getChildren().addAll(sneakerImage, sneakerInfo);
+        sneakerItem.setId("sneaker_item");
 
         return sneakerItem;
     }
@@ -148,7 +154,8 @@ public class Collection {
             User loggedInUser = Application.getLoggedInUser();
 
             if (loggedInUser != null) {
-                String query = "SELECT * " +
+                String query =
+                        "SELECT * " +
                         "FROM sneaker s " +
                         "JOIN model m ON s.model_id = m.model_id " +
                         "JOIN brand b ON m.brand_id = b.brand_id " +
@@ -179,5 +186,10 @@ public class Collection {
     }
     private void showAdd() {
         Application.mainStage.setScene(scenes.get("Add"));
+    }
+
+    private void showStatistics() {
+        scenes.put("Statistics", new Statistics().getStatisticsScene());
+        Application.mainStage.setScene(scenes.get("Statistics"));
     }
 }

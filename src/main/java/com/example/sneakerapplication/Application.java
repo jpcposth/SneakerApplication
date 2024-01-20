@@ -28,14 +28,14 @@ public class Application extends javafx.application.Application {
 
         scenes.put("Login", new Login().getScene());
         scenes.put("Add", new Add().getAddScene());
-//        scenes.put("Statistics", new Statistics().getStatisticsScene());
 
         mainStage = stage;
 
         mainStage.setWidth(applicationSize[0]);
         mainStage.setHeight(applicationSize[1]);
-        mainStage.setResizable(true);
         mainStage.setMaximized(true);
+//        mainStage.setResizable(false);
+        mainStage.setFullScreen(false);
         mainStage.setTitle("Sneakers");
 
         mainStage.setScene(scenes.get("Login"));

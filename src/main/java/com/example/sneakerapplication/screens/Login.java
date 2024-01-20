@@ -69,7 +69,10 @@ public class Login {
             return false;
         }
 
-        String query = "SELECT * FROM User WHERE username = '" + username + "' AND password = '" + password + "'";
+        String query =
+                "SELECT *" +
+                "FROM User" +
+                "WHERE username = '" + username + "' AND password = '" + password + "'";
 
         try {
             ResultSet resultSet = Application.connection.query(query);

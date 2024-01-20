@@ -54,6 +54,11 @@
     -fx-text-fill: #3375CC;
 }
 
+#date-picker {
+    -fx-background-color: #F7F7F7;
+    -fx-text-fill: #3375CC;
+}
+
 #add-button {
     -fx-background-color: #3375CC;
     -fx-text-fill: #FFFFFF;
