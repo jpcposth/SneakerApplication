@@ -47,8 +47,8 @@ public class Statistics {
 
             if (loggedInUser != null) {
                 String query =
-                        "SELECT SUM(price) AS total_price" +
-                        "FROM sneaker" +
+                        "SELECT SUM(price) AS total_price " +
+                        "FROM sneaker " +
                         "WHERE user_id = ?";
                 ResultSet resultSet = Application.connection.query(query, loggedInUser.getUser_id());
 

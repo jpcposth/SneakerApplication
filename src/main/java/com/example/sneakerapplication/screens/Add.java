@@ -120,8 +120,8 @@ public class Add {
 
     private Brand addBrand(String brandName) throws SQLException {
         String brandQuery =
-                "SELECT *" +
-                "FROM brand" +
+                "SELECT * " +
+                "FROM brand " +
                 "WHERE brand = ?";
         ResultSet brandResult = Application.connection.query(brandQuery, brandName);
 
@@ -129,7 +129,7 @@ public class Add {
             return new Brand(brandResult);
         } else {
             String insertBrandQuery =
-                    "INSERT INTO brand" +
+                    "INSERT INTO brand " +
                     "(brand) VALUES (?)";
             Application.connection.updateQuery(insertBrandQuery, brandName);
 
@@ -141,8 +141,8 @@ public class Add {
 
     private Model addModel(String modelName, Brand brand) throws SQLException {
         String modelQuery =
-                "SELECT *" +
-                "FROM model" +
+                "SELECT * " +
+                "FROM model " +
                 "WHERE model = ? AND brand_id = ?";
         ResultSet modelResult = Application.connection.query(modelQuery, modelName, brand.getBrand_id());
 
@@ -150,7 +150,7 @@ public class Add {
             return new Model(modelResult);
         } else {
             String insertModelQuery =
-                    "INSERT INTO model" +
+                    "INSERT INTO model " +
                     "(model, brand_id) VALUES (?, ?)";
             Application.connection.updateQuery(insertModelQuery, modelName, brand.getBrand_id());
 

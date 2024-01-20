@@ -70,8 +70,8 @@ public class Login {
         }
 
         String query =
-                "SELECT *" +
-                "FROM User" +
+                "SELECT * " +
+                "FROM User " +
                 "WHERE username = '" + username + "' AND password = '" + password + "'";
 
         try {
