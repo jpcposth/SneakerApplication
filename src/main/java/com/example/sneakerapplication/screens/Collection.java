@@ -11,10 +11,13 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.TilePane;
 import javafx.scene.text.Text;
 
 import java.sql.ResultSet;
@@ -22,39 +25,52 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+import static com.example.sneakerapplication.Application.applicationSize;
 import static com.example.sneakerapplication.Application.scenes;
 
 public class Collection {
     private Scene collectionScene;
-    private FlowPane sneakerSection, sneakers;
+    private FlowPane sneakerSection;
+    private TilePane sneakers;
     private Sneaker sneaker;
+    private final ProgressIndicator pi;
 
     public Collection() {
-        Pane container = new Pane();
+        FlowPane container = new FlowPane();
         container.setId("container");
 
         sneaker = new Sneaker("", "", "", "", "", "", "", "");
 
-        sneakerSection = new FlowPane();
-        sneakerSection.setPrefSize(Application.applicationSize[0] - 165, Application.applicationSize[1] - 60);
-        sneakerSection.setPadding(new Insets(80, 20, 20, 20));
-        sneakerSection.relocate(getNavBar().getPrefWidth(), 0);
-        sneakerSection.setVgap(20);
 
-        sneakers = new FlowPane();
-        sneakers.setPrefSize(sneakerSection.getPrefWidth() - 40, sneakerSection.getPrefHeight());
+        sneakerSection = new FlowPane();
+//        sneakerSection.setPrefSize(Application.applicationSize[0] - 165, Application.applicationSize[1] - 60);
+//        sneakerSection.setPrefSize(1739, applicationSize[1]);
+//        sneakerSection.setPadding(new Insets(80, 20, 20, 20));
+        sneakerSection.relocate(getNavBar().getPrefWidth(), 0);
+//        sneakerSection.setVgap(20);
+
+        sneakers = new TilePane();
+//        sneakers.setPrefSize(sneakerSection.getPrefWidth(), sneakerSection.getPrefHeight());
+        sneakers.setPrefColumns(5);
         sneakers.setHgap(40);
         sneakers.setVgap(20);
 
+        pi = new ProgressIndicator();
+        pi.setMinWidth(1400);
 
-        sneakerSection.getChildren().addAll(sneakers);
+        sneakerSection.getChildren().addAll(pi, sneakers);
 
-        container.getChildren().addAll(getNavBar(), sneakerSection);
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setContent(sneakerSection);
+//        scrollPane.setPrefSize(applicationSize[0], applicationSize[1]);
+        scrollPane.setPrefSize(1400, applicationSize[1]);
+//        scrollPane.setPrefSize(1700, applicationSize[1]);
 
+        container.getChildren().addAll(getNavBar(), scrollPane);
+//        container.getChildren().addAll(scrollPane);
 
         collectionScene = new Scene(container);
         collectionScene.getStylesheets().add(Application.class.getResource("stylesheets/collection.css").toString());
-
 
         Platform.runLater(this::getSneakers);
     }
@@ -159,8 +175,8 @@ public class Collection {
                         "FROM sneaker s " +
                         "JOIN model m ON s.model_id = m.model_id " +
                         "JOIN brand b ON m.brand_id = b.brand_id " +
-                        "WHERE s.user_id = ?";
-
+                        "WHERE s.user_id = ? " +
+                        "ORDER BY s.sneaker_id ASC;";
 
                 ResultSet sneakerResult = Application.connection.query(query, loggedInUser.getUser_id());
 
@@ -170,17 +186,27 @@ public class Collection {
                     Brand brand = new Brand(sneakerResult);
 
                     Node sneakerItem = generateSneakerItem(sneaker, model, brand);
+                    sneakerItem.setOnMouseClicked(event -> {
+                        try {
+                            int sneakerId = Integer.parseInt(sneaker.getSneaker_id());
+                            showUpdate(sneakerId);
+                        } catch (NumberFormatException e) {
+                            e.printStackTrace();
+                        }
+                    });
+
 
                     if (!sneakers.getChildren().contains(sneakerItem)) {
                         sneakers.getChildren().add(sneakerItem);
                     }
                 }
-                sneakerSection.getChildren().setAll(sneakers);
+                sneakerSection.getChildren().remove(pi);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
+
     public Scene getCollectionScene() {
         return collectionScene;
     }
@@ -192,4 +218,12 @@ public class Collection {
         scenes.put("Statistics", new Statistics().getStatisticsScene());
         Application.mainStage.setScene(scenes.get("Statistics"));
     }
+
+    private void showUpdate(int sneakerId) {
+        Update updateScreen = new Update();
+        updateScreen.updateSneaker(sneakerId);
+        scenes.put("Update", updateScreen.getUpdateScene());
+        Application.mainStage.setScene(scenes.get("Update"));
+    }
+
 }

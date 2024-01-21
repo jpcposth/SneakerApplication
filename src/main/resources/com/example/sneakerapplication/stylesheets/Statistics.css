@@ -16,10 +16,6 @@
     -fx-background-color: #050505;
 }
 
-#nav_item.active {
-    -fx-background-color: #3375CC;
-}
-
 #nav_item:hover {
     -fx-background-color: #F7F7F7;
     -fx-cursor: hand;
@@ -33,16 +29,24 @@
     -fx-fill: #FFFFFF;
 }
 
-#nav_item.active #nav_item_text {
-    -fx-fill: #FFFFFF;
-}
-
 #nav_item:hover #nav_item_text {
     -fx-fill: #050505;
 }
 
 #nav_item:pressed #nav_item_text {
     -fx-fill: #FFFFFF;
+}
+
+#nav_item.active {
+    -fx-background-color: #3375CC;
+}
+
+#nav_item.active #nav_item_text {
+    -fx-fill: #FFFFFF;
+}
+
+#nav_item.active:hover {
+    -fx-background-color: #295EA3;
 }
 
 #inputfields {

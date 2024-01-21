@@ -49,10 +49,30 @@
     -fx-background-color: #295EA3;
 }
 
-/*#sneaker_info {*/
-/*    -fx-background-color: #F7F7F7;*/
-/*}*/
+#inputfields {
+    -fx-background-color: #050505;
+}
 
+#input {
+    -fx-background-color: #F7F7F7;
+    -fx-text-fill: #3375CC;
+}
+
+#date-picker {
+    -fx-background-color: #F7F7F7;
+    -fx-text-fill: #3375CC;
+}
+
+#update-button {
+    -fx-background-color: #3375CC;
+    -fx-text-fill: #FFFFFF;
+}
+
+#update-button:hover {
+    -fx-background-color: #295EA3;
+    -fx-text-fill: #FFFFFF;
+    -fx-cursor: hand;
+}
 
 
 

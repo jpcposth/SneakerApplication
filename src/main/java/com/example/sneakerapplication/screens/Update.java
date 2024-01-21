@@ -8,118 +8,61 @@ import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
-import java.sql.*;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
-import static com.example.sneakerapplication.Application.*;
+import static com.example.sneakerapplication.Application.applicationSize;
+import static com.example.sneakerapplication.Application.scenes;
 
-public class Add {
-    private Scene addScene;
-    public Add() {
+public class Update {
+    private Scene updateScene;
+    private int sneakerId;
+
+    public Update() {
         Pane container = new Pane();
         container.setId("container");
 
+        container.getChildren().addAll(getNavBar(), showInput());
 
-        container.getChildren().addAll(getNavBar(),showInput());
-
-        addScene = new Scene(container);
-        addScene.getStylesheets().add(Application.class.getResource("stylesheets/add.css").toString());
+        updateScene = new Scene(container);
+        updateScene.getStylesheets().add(Application.class.getResource("stylesheets/update.css").toString());
     }
 
-    private Pane showInput() {
-        VBox inputFields = new VBox(20);
-        inputFields.setAlignment(Pos.CENTER);
-        inputFields.setPadding(new Insets(50));
-        inputFields.relocate(applicationSize[0] / 2 - 550, applicationSize[1] / 2 - 475);
-        inputFields.setId("inputfields");
 
-        TextField image = new TextField();
-        image.setPromptText("Image URL");
-        image.setId("input");
-        image.setPrefWidth(400);
-
-        TextField brand = new TextField();
-        brand.setPromptText("Brand");
-        brand.setId("input");
-        brand.setPrefWidth(400);
-
-        TextField model = new TextField();
-        model.setPromptText("Model");
-        model.setId("input");
-        model.setPrefWidth(400);
-
-        TextField size = new TextField();
-        size.setPromptText("Size");
-        size.setId("input");
-        size.setPrefWidth(400);
-
-        DatePicker release_date = new DatePicker();
-        release_date.setPromptText("Release date");
-        release_date.setId("input");
-        release_date.setPrefWidth(400);
-
-        DatePicker purchase_date = new DatePicker();
-        purchase_date.setPromptText("Purchase date");
-        purchase_date.setId("input");
-        purchase_date.setPrefWidth(400);
-
-        TextField price = new TextField();
-        price.setPromptText("Price");
-        price.setId("input");
-        price.setPrefWidth(400);
-
-        Button addButton = new Button("Add");
-        addButton.setId("add-button");
-        addButton.setPrefWidth(400);
-        addButton.setOnAction(e -> {
-            if (!image.getText().isEmpty() && !brand.getText().isEmpty() && !model.getText().isEmpty()
-                    && !size.getText().isEmpty() && release_date.getValue() != null
-                    && purchase_date.getValue() != null && !price.getText().isEmpty()) {
-
-                LocalDate releaseDate = release_date.getValue();
-                String formattedReleaseDate = releaseDate.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
-
-                LocalDate purchaseDate = purchase_date.getValue();
-                String formattedPurchaseDate = purchaseDate.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
-
-                addSneaker(image.getText(), brand.getText(), model.getText(),
-                        size.getText(), formattedReleaseDate, formattedPurchaseDate, price.getText());
-                showCollection();
-            } else {
-                showAlert("Please fill in all fields.");
-            }
-        });
-        inputFields.getChildren().addAll(image, brand, model, size, release_date, purchase_date, price, addButton);
-        return inputFields;
-    }
-
-    private void addSneaker(String image, String brandName, String modelName,
-                            String size, String releaseDate, String purchaseDate, String price) {
+    private void updateSneakerInDatabase(int sneakerId, String image, String brandName, String modelName,
+                                         String size, LocalDate releaseDate, LocalDate purchaseDate, String price) {
         try {
             User loggedInUser = Application.getLoggedInUser();
             if (loggedInUser != null) {
                 Brand brand = addBrand(brandName);
-
                 Model model = addModel(modelName, brand);
 
-                String insertQuery =
-                        "INSERT INTO sneaker (image, user_id, model_id, size, release_date, purchase_date, price) " +
-                        "VALUES (?, ?, ?, ?, ?, ?, ?)";
-                Application.connection.updateQuery(insertQuery, image, loggedInUser.getUser_id(), model.getModel_id(), size, releaseDate, purchaseDate, price);
-
+                String updateQuery =
+                        "UPDATE sneaker " +
+                        "SET image = ?, model_id = ?, size = ?, release_date = ?, purchase_date = ?, price = ? " +
+                        "WHERE sneaker_id = ?";
+                Application.connection.updateQuery(updateQuery, image, model.getModel_id(), size, releaseDate, purchaseDate, price, sneakerId);
+                showAlert("Sneaker updated successfully!");
             } else {
                 showAlert("User not logged in.");
             }
         } catch (SQLException e) {
-            showAlert("Error adding sneaker: " + e.getMessage());
+            showAlert("Error updating sneaker: " + e.getMessage());
         }
+    }
+
+    public void updateSneaker(int sneakerId) {
+        this.sneakerId = sneakerId;
     }
 
     private Brand addBrand(String brandName) throws SQLException {
@@ -171,16 +114,71 @@ public class Add {
         alert.showAndWait();
     }
 
+    private Pane showInput() {
+        VBox inputFields = new VBox(20);
+        inputFields.setAlignment(Pos.CENTER);
+        inputFields.setPadding(new Insets(50));
+        inputFields.relocate(applicationSize[0] / 2 - 550, applicationSize[1] / 2 - 475);
+        inputFields.setId("inputfields");
+
+        TextField image = new TextField();
+        image.setPromptText("Image URL");
+        image.setId("input");
+        image.setPrefWidth(400);
+
+        TextField brand = new TextField();
+        brand.setPromptText("Brand");
+        brand.setId("input");
+        brand.setPrefWidth(400);
+
+        TextField model = new TextField();
+        model.setPromptText("Model");
+        model.setId("input");
+        model.setPrefWidth(400);
+
+        TextField size = new TextField();
+        size.setPromptText("Size");
+        size.setId("input");
+        size.setPrefWidth(400);
+
+        DatePicker release_date = new DatePicker();
+        release_date.setPromptText("Release date");
+        release_date.setId("input");
+        release_date.setPrefWidth(400);
+
+        DatePicker purchase_date = new DatePicker();
+        purchase_date.setPromptText("Purchase date");
+        purchase_date.setId("input");
+        purchase_date.setPrefWidth(400);
+
+        TextField price = new TextField();
+        price.setPromptText("Price");
+        price.setId("input");
+        price.setPrefWidth(400);
+
+        Button updateButton = new Button("Update");
+        updateButton.setId("update-button");
+        updateButton.setPrefWidth(400);
+        updateButton.setOnAction(e -> {
+            updateSneakerInDatabase(this.sneakerId, image.getText(), brand.getText(), model.getText(),
+                    size.getText(), release_date.getValue(), purchase_date.getValue(), price.getText());
+        });
+        inputFields.getChildren().addAll(image, brand, model, size, release_date, purchase_date, price, updateButton);
+        return inputFields;
+    }
+
     private Pane getNavBar() {
         FlowPane navBar = new FlowPane();
         navBar.setId("navbar");
         navBar.setOrientation(Orientation.HORIZONTAL);
-        navBar.setPrefSize(250, applicationSize[1]);
+        navBar.setPrefSize(250, Application.applicationSize[1]);
         navBar.setPadding(new Insets(80, 0, 0, 0));
+
         navBar.getChildren().addAll(
-                generateNavItem("Collection", false, this::showCollection),
-                generateNavItem("Add", true, null),
+                generateNavItem("Collection", true, this::showCollection),
+                generateNavItem("Add", false, this::showAdd),
                 generateNavItem("Statistics", false, this::showStatistics));
+
         return navBar;
     }
 
@@ -196,6 +194,7 @@ public class Add {
         navItemText.setId("nav_item_text");
         navItem.getChildren().addAll(navItemText);
 
+
         if (active) {
             navItem.getStyleClass().add("active");
         } else {
@@ -206,17 +205,22 @@ public class Add {
 
         return navItem;
     }
-    public Scene getAddScene() {
-        return addScene;
-    }
 
     private void showCollection() {
         scenes.put("Collection", new Collection().getCollectionScene());
         Application.mainStage.setScene(scenes.get("Collection"));
     }
 
+    private void showAdd() {
+        Application.mainStage.setScene(scenes.get("Add"));
+    }
+
     private void showStatistics() {
         scenes.put("Statistics", new Statistics().getStatisticsScene());
         Application.mainStage.setScene(scenes.get("Statistics"));
+    }
+
+    public Scene getUpdateScene() {
+        return updateScene;
     }
 }
