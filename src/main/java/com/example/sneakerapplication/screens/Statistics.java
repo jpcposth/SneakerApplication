@@ -92,7 +92,7 @@ public class Statistics {
         navBar.getChildren().addAll(
                 generateNavItem("Collection", false, this::showCollection),
                 generateNavItem("Add", false, this::showAdd),
-                generateNavItem("Statistics", true, null));
+                generateNavItem("Statistics", true, () -> {}));
         return navBar;
     }
 

@@ -100,8 +100,7 @@ public class Add {
         return inputFields;
     }
 
-    private void addSneaker(String image, String brandName, String modelName,
-                            String size, String releaseDate, String purchaseDate, String price) {
+    private void addSneaker(String image, String brandName, String modelName, String size, String releaseDate, String purchaseDate, String price) {
         try {
             User loggedInUser = Application.getLoggedInUser();
             if (loggedInUser != null) {
@@ -114,8 +113,6 @@ public class Add {
                         "VALUES (?, ?, ?, ?, ?, ?, ?)";
                 Application.connection.updateQuery(insertQuery, image, loggedInUser.getUser_id(), model.getModel_id(), size, releaseDate, purchaseDate, price);
 
-            } else {
-                showAlert("User not logged in.");
             }
         } catch (SQLException e) {
             showAlert("Error adding sneaker: " + e.getMessage());
@@ -179,7 +176,7 @@ public class Add {
         navBar.setPadding(new Insets(80, 0, 0, 0));
         navBar.getChildren().addAll(
                 generateNavItem("Collection", false, this::showCollection),
-                generateNavItem("Add", true, null),
+                generateNavItem("Add", true, () -> {}),
                 generateNavItem("Statistics", false, this::showStatistics));
         return navBar;
     }

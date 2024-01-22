@@ -52,19 +52,19 @@ public class Collection {
         sneakers = new TilePane();
 //        sneakers.setPrefSize(sneakerSection.getPrefWidth(), sneakerSection.getPrefHeight());
         sneakers.setPrefColumns(5);
-        sneakers.setHgap(40);
+//        sneakers.setHgap(40);
         sneakers.setVgap(20);
 
         pi = new ProgressIndicator();
-        pi.setMinWidth(1400);
+        pi.setMaxWidth(getNavBar().getPrefWidth());
+        pi.relocate(getNavBar().getPrefWidth(), 0);
 
         sneakerSection.getChildren().addAll(pi, sneakers);
 
         ScrollPane scrollPane = new ScrollPane();
         scrollPane.setContent(sneakerSection);
-//        scrollPane.setPrefSize(applicationSize[0], applicationSize[1]);
-        scrollPane.setPrefSize(1400, applicationSize[1]);
-//        scrollPane.setPrefSize(1700, applicationSize[1]);
+        scrollPane.setMaxSize(applicationSize[0]-getNavBar().getPrefWidth(), applicationSize[1]);
+//        scrollPane.setPrefSize(Application.applicationSize[0]/2, applicationSize[1]);
 
         container.getChildren().addAll(getNavBar(), scrollPane);
 //        container.getChildren().addAll(scrollPane);
@@ -81,8 +81,12 @@ public class Collection {
         navBar.setPrefSize(250, Application.applicationSize[1]);
         navBar.setPadding(new Insets(80, 0, 0, 0));
 
+//        ColumnConstraints colConstraints = new ColumnConstraints();
+//        colConstraints.setPercentWidth(10);
+//        navBar.getColumnConstraints().add(colConstraints);
+
         navBar.getChildren().addAll(
-                generateNavItem("Collection", true, null),
+                generateNavItem("Collection", true, () -> {}),
                 generateNavItem("Add", false, this::showAdd),
                 generateNavItem("Statistics", false, this::showStatistics));
 
@@ -100,7 +104,6 @@ public class Collection {
         Text navItemText = new Text(title);
         navItemText.setId("nav_item_text");
         navItem.getChildren().addAll(navItemText);
-
 
         if (active) {
             navItem.getStyleClass().add("active");
@@ -126,10 +129,7 @@ public class Collection {
         sneakerImageView.setPreserveRatio(true);
         sneakerImageView.setFitWidth(250);
 
-
-
         sneakerImage.getChildren().add(sneakerImageView);
-
 
         FlowPane sneakerInfo = new FlowPane();
         sneakerInfo.setOrientation(Orientation.VERTICAL);
@@ -195,7 +195,6 @@ public class Collection {
                         }
                     });
 
-
                     if (!sneakers.getChildren().contains(sneakerItem)) {
                         sneakers.getChildren().add(sneakerItem);
                     }
@@ -220,10 +219,8 @@ public class Collection {
     }
 
     private void showUpdate(int sneakerId) {
-        Update updateScreen = new Update();
-        updateScreen.updateSneaker(sneakerId);
-        scenes.put("Update", updateScreen.getUpdateScene());
+        UpdateDelete updateDeleteScreen = new UpdateDelete(sneakerId);
+        scenes.put("Update", updateDeleteScreen.getUpdateScene());
         Application.mainStage.setScene(scenes.get("Update"));
     }
-
 }
