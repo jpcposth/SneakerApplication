@@ -40,10 +40,8 @@ public class Collection {
         container.setId("container");
 
         sneaker = new Sneaker("", "", "", "", "", "", "", "");
-
-
-        container.getChildren().addAll(getNavBar() ,getCollection());
-        container.setPrefSize(1280, 720);
+        
+        container.getChildren().addAll(getNavBar(), getCollection());
 
         collectionScene = new Scene(container);
         collectionScene.getStylesheets().add(Application.class.getResource("stylesheets/collection.css").toString());
@@ -53,20 +51,15 @@ public class Collection {
 
     private ScrollPane getCollection() {
         sneakerSection = new FlowPane();
-//        sneakerSection.setPadding(new Insets(80, 0, 0, 40));
-
-
-        sneakerSection.setHgap(40);
-
+        sneakerSection.setPadding(new Insets(80, 0, 0, 64));
 
         sneakers = new TilePane();
-        sneakers.setHgap(40);
-        sneakers.setVgap(40);
+        sneakers.setHgap(64);
+        sneakers.setVgap(64);
         sneakers.setPrefColumns(3);
 
         pi = new ProgressIndicator();
-        pi.setMaxWidth(1030);
-//        pi.setMinWidth(applicationSize[0]-getNavBar().getPrefWidth());
+        pi.setMinWidth(1016);
 
         sneakerSection.getChildren().addAll(pi, sneakers);
 
@@ -74,9 +67,7 @@ public class Collection {
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         scrollPane.setContent(sneakerSection);
-//        scrollPane.setPrefSize(applicationSize[0]-getNavBar().getPrefWidth(), applicationSize[1]);
-        scrollPane.setMaxSize(1030, applicationSize[1]);
-//        scrollPane.setMinSize(1030, applicationSize[1]);
+        scrollPane.setPrefSize(1015, 683);
 
         return scrollPane;
     }
@@ -85,7 +76,7 @@ public class Collection {
         FlowPane navBar = new FlowPane();
         navBar.setId("navbar");
         navBar.setOrientation(Orientation.HORIZONTAL);
-        navBar.setPrefSize(250, Application.applicationSize[1]);
+        navBar.setPrefSize(250, 683);
         navBar.setPadding(new Insets(80, 0, 0, 0));
 
         navBar.getChildren().addAll(
