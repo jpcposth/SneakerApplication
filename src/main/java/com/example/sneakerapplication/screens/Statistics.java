@@ -7,6 +7,7 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -24,22 +25,66 @@ public class Statistics {
         Pane container = new Pane();
         container.setId("container");
 
-        VBox statistics = new VBox();
-        statistics.setAlignment(Pos.CENTER);
-        statistics.setPadding(new Insets(50));
-        statistics.relocate(applicationSize[0] / 2 - 550, applicationSize[1] / 2 - 475);
-        statistics.setId("statistics");
-
-        Text total_price = new Text(String.format("Total sneaker price: €%.2f", getTotalPrice()));
-
-        Text total_sneakers = new Text("Total sneakers amount: " + getTotalSneakers());
-
-        statistics.getChildren().addAll(total_price,total_sneakers);
-        container.getChildren().addAll(getNavBar(), statistics);
+        container.getChildren().addAll(getNavBar(), getStatistics());
 
         statisticsScene = new Scene(container);
         statisticsScene.getStylesheets().add(Application.class.getResource("stylesheets/statistics.css").toString());
     }
+
+    private Pane getStatistics() {
+        HBox statistics = new HBox();
+        statistics.setSpacing(100);
+
+        VBox leftStatistics = new VBox(20);
+        leftStatistics.setPadding(new Insets(45));
+        leftStatistics.setId("statistics");
+
+        VBox rightStatistics = new VBox(20);
+        rightStatistics.setPadding(new Insets(45));
+        rightStatistics.setId("statistics");
+
+        Text total_price = new Text(String.format("Total sneaker price: €%.2f", getTotalPrice()));
+        total_price.setId("statistics-text");
+        Text total_sneakers = new Text("Total sneakers amount: " + getTotalSneakers());
+        total_sneakers.setId("statistics-text");
+        Text brand_with_most_sneakers = new Text("The brand with the most sneakers: " + getBrandWithMostSneakers(Application.getLoggedInUser())[0]);
+        Text brand_with_most_sneakers_amount = new Text("Total sneaker amount from " + getBrandWithMostSneakers(Application.getLoggedInUser())[0] + ": " + getBrandWithMostSneakers(Application.getLoggedInUser())[1]);
+
+        leftStatistics.getChildren().addAll(total_price, total_sneakers);
+        rightStatistics.getChildren().addAll(brand_with_most_sneakers, brand_with_most_sneakers_amount);
+
+        statistics.getChildren().addAll(leftStatistics, rightStatistics);
+        statistics.relocate(350, 100);
+
+        return statistics;
+    }
+    private String[] getBrandWithMostSneakers(User user) {
+        try {
+            if (user != null) {
+                String query =
+                        "SELECT brand.brand, COUNT(sneaker.sneaker_id) AS total_sneakers " +
+                                "FROM brand " +
+                                "JOIN model ON brand.brand_id = model.brand_id " +
+                                "JOIN sneaker ON model.model_id = sneaker.model_id " +
+                                "WHERE sneaker.user_id = ? " +
+                                "GROUP BY brand.brand " +
+                                "ORDER BY total_sneakers DESC " +
+                                "LIMIT 1";
+
+                ResultSet resultSet = Application.connection.query(query, user.getUser_id());
+
+                if (resultSet.next()) {
+                    String brandName = resultSet.getString("brand");
+                    int totalSneakers = resultSet.getInt("total_sneakers");
+                    return new String[]{brandName, String.valueOf(totalSneakers)};
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return new String[]{"", "0"};
+    }
+
 
     private double getTotalPrice() {
         try {

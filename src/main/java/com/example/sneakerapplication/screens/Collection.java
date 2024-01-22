@@ -33,57 +33,60 @@ public class Collection {
     private FlowPane sneakerSection;
     private TilePane sneakers;
     private Sneaker sneaker;
-    private final ProgressIndicator pi;
+    private ProgressIndicator pi;
 
     public Collection() {
-        FlowPane container = new FlowPane();
+        FlowPane container = new FlowPane(0, 0);
         container.setId("container");
 
         sneaker = new Sneaker("", "", "", "", "", "", "", "");
 
 
-        sneakerSection = new FlowPane();
-//        sneakerSection.setPrefSize(Application.applicationSize[0] - 165, Application.applicationSize[1] - 60);
-//        sneakerSection.setPrefSize(1739, applicationSize[1]);
-//        sneakerSection.setPadding(new Insets(80, 20, 20, 20));
-        sneakerSection.relocate(getNavBar().getPrefWidth(), 0);
-//        sneakerSection.setVgap(20);
-
-        sneakers = new TilePane();
-//        sneakers.setPrefSize(sneakerSection.getPrefWidth(), sneakerSection.getPrefHeight());
-        sneakers.setPrefColumns(5);
-//        sneakers.setHgap(40);
-        sneakers.setVgap(20);
-
-        pi = new ProgressIndicator();
-        pi.setMaxWidth(getNavBar().getPrefWidth());
-        pi.relocate(getNavBar().getPrefWidth(), 0);
-
-        sneakerSection.getChildren().addAll(pi, sneakers);
-
-        ScrollPane scrollPane = new ScrollPane();
-        scrollPane.setContent(sneakerSection);
-        scrollPane.setMaxSize(applicationSize[0]-getNavBar().getPrefWidth(), applicationSize[1]);
-//        scrollPane.setPrefSize(Application.applicationSize[0]/2, applicationSize[1]);
-
-        container.getChildren().addAll(getNavBar(), scrollPane);
-//        container.getChildren().addAll(scrollPane);
+        container.getChildren().addAll(getNavBar() ,getCollection());
+        container.setPrefSize(1280, 720);
 
         collectionScene = new Scene(container);
         collectionScene.getStylesheets().add(Application.class.getResource("stylesheets/collection.css").toString());
 
         Platform.runLater(this::getSneakers);
     }
+
+    private ScrollPane getCollection() {
+        sneakerSection = new FlowPane();
+//        sneakerSection.setPadding(new Insets(80, 0, 0, 40));
+
+
+        sneakerSection.setHgap(40);
+
+
+        sneakers = new TilePane();
+        sneakers.setHgap(40);
+        sneakers.setVgap(40);
+        sneakers.setPrefColumns(3);
+
+        pi = new ProgressIndicator();
+        pi.setMaxWidth(1030);
+//        pi.setMinWidth(applicationSize[0]-getNavBar().getPrefWidth());
+
+        sneakerSection.getChildren().addAll(pi, sneakers);
+
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        scrollPane.setContent(sneakerSection);
+//        scrollPane.setPrefSize(applicationSize[0]-getNavBar().getPrefWidth(), applicationSize[1]);
+        scrollPane.setMaxSize(1030, applicationSize[1]);
+//        scrollPane.setMinSize(1030, applicationSize[1]);
+
+        return scrollPane;
+    }
+
     private Pane getNavBar() {
         FlowPane navBar = new FlowPane();
         navBar.setId("navbar");
         navBar.setOrientation(Orientation.HORIZONTAL);
         navBar.setPrefSize(250, Application.applicationSize[1]);
         navBar.setPadding(new Insets(80, 0, 0, 0));
-
-//        ColumnConstraints colConstraints = new ColumnConstraints();
-//        colConstraints.setPercentWidth(10);
-//        navBar.getColumnConstraints().add(colConstraints);
 
         navBar.getChildren().addAll(
                 generateNavItem("Collection", true, () -> {}),

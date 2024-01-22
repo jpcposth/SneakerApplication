@@ -31,14 +31,14 @@ public class UpdateDelete {
         Pane container = new Pane();
         container.setId("container");
 
-        container.getChildren().addAll(getNavBar(), showInput());
+        container.getChildren().addAll(getNavBar(), getInput());
 
         updateScene = new Scene(container);
         updateScene.getStylesheets().add(Application.class.getResource("stylesheets/updatedelete.css").toString());
     }
 
 
-    private Pane showInput() {
+    private Pane getInput() {
         String imageInput = "";
         String brandInput = "";
         String modelInput = "";
@@ -63,9 +63,8 @@ public class UpdateDelete {
         }
 
         VBox inputFields = new VBox(20);
-        inputFields.setAlignment(Pos.CENTER);
         inputFields.setPadding(new Insets(50));
-        inputFields.relocate(applicationSize[0] / 2 - 550, applicationSize[1] / 2 - 475);
+        inputFields.relocate((applicationSize[0]-getNavBar().getPrefWidth())/2, 60 );
         inputFields.setId("inputfields");
 
         TextField image = new TextField(imageInput);
@@ -158,10 +157,10 @@ public class UpdateDelete {
             if (loggedInUser != null) {
                 String query =
                         "SELECT * " +
-                                "FROM sneaker s " +
-                                "JOIN model m ON s.model_id = m.model_id " +
-                                "JOIN brand b ON m.brand_id = b.brand_id " +
-                                "WHERE s.sneaker_id = '" + this.sneakerId + "';";
+                        "FROM sneaker s " +
+                        "JOIN model m ON s.model_id = m.model_id " +
+                        "JOIN brand b ON m.brand_id = b.brand_id " +
+                        "WHERE s.sneaker_id = '" + this.sneakerId + "';";
                 sneakerResult = Application.connection.query(query);
 
             }

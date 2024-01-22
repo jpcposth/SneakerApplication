@@ -35,9 +35,8 @@ public class Add {
 
     private Pane showInput() {
         VBox inputFields = new VBox(20);
-        inputFields.setAlignment(Pos.CENTER);
-        inputFields.setPadding(new Insets(50));
-        inputFields.relocate(applicationSize[0] / 2 - 550, applicationSize[1] / 2 - 475);
+        inputFields.setPadding(new Insets(50));;
+        inputFields.relocate((applicationSize[0]-getNavBar().getPrefWidth())/2, 80);
         inputFields.setId("inputfields");
 
         TextField image = new TextField();

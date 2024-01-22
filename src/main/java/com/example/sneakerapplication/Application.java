@@ -21,7 +21,9 @@ public class Application extends javafx.application.Application {
     public static Stage mainStage;
     public static HashMap<String, Scene> scenes = new HashMap<>();
     public static MySQLConnection connection;
-    public static int[] applicationSize = {2560, 1440};
+    public static int[] applicationSize = {1280, 720};
+//    public static int[] applicationSize = {1706, 1060};
+//    public static int[] applicationSize = {2560, 1060};
     @Override
     public void start(Stage stage) throws IOException {
         connection = new MySQLConnection("127.0.0.1", "3306", "sneaker_app", "root", "");
@@ -33,9 +35,8 @@ public class Application extends javafx.application.Application {
 
         mainStage.setWidth(applicationSize[0]);
         mainStage.setHeight(applicationSize[1]);
-        mainStage.setMaximized(true);
-//        mainStage.setResizable(false);
-        mainStage.setFullScreen(false);
+//        mainStage.setMaximized(true);
+        mainStage.setResizable(false);
         mainStage.setTitle("Sneakers");
 
         mainStage.setScene(scenes.get("Login"));

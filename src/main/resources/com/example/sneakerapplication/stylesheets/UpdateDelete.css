@@ -55,7 +55,7 @@
 
 #input {
     -fx-background-color: #F7F7F7;
-    -fx-text-fill: #3375CC;
+    -fx-text-inner-color: #3375CC;
 }
 
 #button {
