@@ -43,14 +43,13 @@ public class Login {
         passwordField.setPrefWidth(200);
 
         Button loginButton = new Button("Log in");
-        loginButton.setId("login-button");
+        loginButton.setId("button");
         loginButton.setPrefWidth(200);
         loginButton.setOnAction(e -> {
             if (isValidCredentials(usernameField.getText(), passwordField.getText())) {
                 showCollection();
             }
         });
-
 
         container.getChildren().addAll(usernameField, passwordField, loginButton);
         root.getChildren().addAll(container);
@@ -62,40 +61,47 @@ public class Login {
 
     private boolean isValidCredentials(String username, String password) {
         if (username.isEmpty() || password.isEmpty()) {
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            alert.setTitle("Error");
-            alert.setHeaderText("Please fill in all fields.");
-            alert.showAndWait();
+            showAlert("Please fill in all fields.");
             return false;
         }
 
-        String query =
-                "SELECT * " +
-                "FROM user " +
-                "WHERE username = '" + username + "' AND password = '" + password + "'";
-
         try {
-            ResultSet resultSet = Application.connection.query(query);
-            if (resultSet.next()) {
-                User loggedInUser = new User(
-                        resultSet.getString("user_id"),
-                        resultSet.getString("username"),
-                        resultSet.getString("password")
-                );
-
+            User loggedInUser = authenticateUser(username, password);
+            if (loggedInUser != null) {
                 Application.setUser(loggedInUser);
                 loggedIn = true;
                 return true;
             } else {
-                Alert alert = new Alert(Alert.AlertType.WARNING);
-                alert.setTitle("Error");
-                alert.setHeaderText("Invalid username or password. Please try again.");
-                alert.showAndWait();
+                showAlert("Invalid username or password. Please try again.");
             }
         } catch (SQLException e) {
             System.out.println("An error occurred during login. Please try again.");
         }
         return false;
+    }
+
+    private User authenticateUser(String username, String password) throws SQLException {
+        String query =
+                "SELECT * " +
+                "FROM user " +
+                "WHERE username = ? AND password = ?";
+
+        ResultSet resultSet = Application.connection.query(query, username, password);
+        if (resultSet.next()) {
+            return new User(
+                    resultSet.getString("user_id"),
+                    resultSet.getString("username"),
+                    resultSet.getString("password")
+            );
+        }
+        return null;
+    }
+
+    private void showAlert(String message) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Error");
+        alert.setHeaderText(message);
+        alert.showAndWait();
     }
 
     public Scene getScene() {

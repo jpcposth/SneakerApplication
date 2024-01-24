@@ -8,6 +8,8 @@ import com.example.sneakerapplication.classes.User;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
@@ -44,22 +46,13 @@ public class Collection {
 
         container.getChildren().addAll(getNavBar(), getCollection());
 
-        collectionScene = new Scene(container);
-        collectionScene.getStylesheets().add(Application.class.getResource("stylesheets/collection.css").toString());
-
-
         Platform.runLater(() -> {
             getDistinctBrands();
             getSneakers();
         });
-//        long startTime = System.currentTimeMillis();
-//        Platform.runLater(() -> {
-//            long endTime = System.currentTimeMillis();
-//            long loadTimeMillis = endTime - startTime;
-//            double loadTimeSeconds = loadTimeMillis / 1000.0;
-//            System.out.println("Sneakers load time: " + loadTimeSeconds + " seconds");
-//
-//        });
+
+        collectionScene = new Scene(container);
+        collectionScene.getStylesheets().add(Application.class.getResource("stylesheets/collection.css").toString());
     }
 
     private ScrollPane getCollection() {
@@ -147,11 +140,30 @@ public class Collection {
         ImageView sneakerImageView = new ImageView();
         sneakerImageView.setPreserveRatio(true);
         sneakerImageView.setFitWidth(250);
-        Platform.runLater(() -> {
+        Service<Image> loadImageService = new Service<>() {
+            @Override
+            protected Task<Image> createTask() {
+                return new Task<>() {
+                    @Override
+                    protected Image call() {
+                        try {
+                            Thread.sleep(1);
+                            return new Image(sneaker.getImage());
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                            return null;
+                        }
+                    }
+                };
+            }
+        };
+        pi.progressProperty().bind(loadImageService.progressProperty());
+        loadImageService.setOnSucceeded(event -> {
             sneakerImage.getChildren().remove(pi);
-            sneakerImageView.setImage(new Image(sneaker.getImage()));
+            sneakerImageView.setImage(loadImageService.getValue());
             sneakerImage.getChildren().add(sneakerImageView);
         });
+        loadImageService.start();
 
         FlowPane sneakerInfo = new FlowPane();
         sneakerInfo.setOrientation(Orientation.VERTICAL);
@@ -272,7 +284,6 @@ public class Collection {
             throw new RuntimeException(e);
         }
     }
-
 
     public Scene getCollectionScene() {
         return collectionScene;
