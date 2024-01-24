@@ -6,11 +6,14 @@ import com.example.sneakerapplication.classes.Model;
 import com.example.sneakerapplication.classes.Sneaker;
 import com.example.sneakerapplication.classes.User;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
@@ -20,6 +23,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.text.Text;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -34,40 +38,66 @@ public class Collection {
     private TilePane sneakers;
     private Sneaker sneaker;
     private ProgressIndicator pi;
+    private ComboBox<String> comboBoxBrand;
 
     public Collection() {
         FlowPane container = new FlowPane(0, 0);
         container.setId("container");
 
         sneaker = new Sneaker("", "", "", "", "", "", "", "");
-        
+
         container.getChildren().addAll(getNavBar(), getCollection());
 
         collectionScene = new Scene(container);
         collectionScene.getStylesheets().add(Application.class.getResource("stylesheets/collection.css").toString());
 
-        Platform.runLater(this::getSneakers);
+        Platform.runLater(() -> {
+            getDistinctBrands();
+            getSneakers();
+        });
+//        long startTime = System.currentTimeMillis();
+//        Platform.runLater(() -> {
+//            long endTime = System.currentTimeMillis();
+//            long loadTimeMillis = endTime - startTime;
+//            double loadTimeSeconds = loadTimeMillis / 1000.0;
+//            System.out.println("Sneakers load time: " + loadTimeSeconds + " seconds");
+//
+//        });
     }
 
     private ScrollPane getCollection() {
         sneakerSection = new FlowPane();
-        sneakerSection.setPadding(new Insets(80, 0, 0, 64));
+        sneakerSection.setPadding(new Insets(40, 0, 40, 50));
+        sneakerSection.setId("sneaker_section");
+        sneakerSection.setPrefSize(applicationSize [0]-getNavBar().getPrefWidth()-15, applicationSize [1]-37);
+        sneakerSection.setVgap(40);
 
         sneakers = new TilePane();
-        sneakers.setHgap(64);
-        sneakers.setVgap(64);
-        sneakers.setPrefColumns(3);
+        sneakers.setHgap(50);
+        sneakers.setVgap(40);
+        sneakers.setPrefColumns(4);
+
+        comboBoxBrand = new ComboBox<>();
+        comboBoxBrand.setPromptText("Brand");
+        comboBoxBrand.setPrefWidth(250);
+        comboBoxBrand.setId("combo");
+        comboBoxBrand.setVisibleRowCount(5);
 
         pi = new ProgressIndicator();
-        pi.setMinWidth(1016);
+        pi.setMinWidth(applicationSize [0]-getNavBar().getPrefWidth());
 
-        sneakerSection.getChildren().addAll(pi, sneakers);
+        sneakerSection.getChildren().addAll(pi);
+
+        Platform.runLater(() -> {
+            sneakerSection.getChildren().addAll(comboBoxBrand, sneakers);
+        });
 
         ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setId("scroll");
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         scrollPane.setContent(sneakerSection);
-        scrollPane.setPrefSize(1015, 683);
+        scrollPane.setPrefSize(applicationSize [0]-getNavBar().getPrefWidth()-15, applicationSize [1]-37);
 
         return scrollPane;
     }
@@ -76,8 +106,8 @@ public class Collection {
         FlowPane navBar = new FlowPane();
         navBar.setId("navbar");
         navBar.setOrientation(Orientation.HORIZONTAL);
-        navBar.setPrefSize(250, 683);
-        navBar.setPadding(new Insets(80, 0, 0, 0));
+        navBar.setPrefSize(250, applicationSize [1]-37);
+        navBar.setPadding(new Insets(40, 0, 0, 0));
 
         navBar.getChildren().addAll(
                 generateNavItem("Collection", true, () -> {}),
@@ -114,7 +144,6 @@ public class Collection {
         FlowPane sneakerItem = new FlowPane();
         sneakerItem.setOrientation(Orientation.HORIZONTAL);
         sneakerItem.setMaxSize(250, 350);
-//        sneakerItem.setStyle("-fx-background-color: pink;");
 
         FlowPane sneakerImage = new FlowPane();
         sneakerImage.setPrefSize(250, 250);
@@ -129,29 +158,29 @@ public class Collection {
         sneakerInfo.setOrientation(Orientation.VERTICAL);
         sneakerInfo.setPrefSize(250, 150);
 
-        Text brand_id = new Text("Brand: " + brand.getBrand());
-        brand_id.setId("brand_id");
+        Text brandText = new Text("Brand: " + brand.getBrand());
+        brandText.setId("brand_id");
 
-        Text model_id = new Text("Model: " + model.getModel());
-        model_id.setId("model_id");
+        Text modelText = new Text("Model: " + model.getModel());
+        modelText.setId("model_id");
 
         double sizeValue = Double.parseDouble(sneaker.getSize());
         Text size = new Text(String.format("Size: %.1f", sizeValue));
         size.setId("size");
 
-        LocalDate releaseDate = LocalDate.parse(sneaker.getRelease_date());
-        Text release_date = new Text("Release Date: " + releaseDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-        release_date.setId("release_date");
+        LocalDate release_date = LocalDate.parse(sneaker.getRelease_date());
+        Text releaseDate = new Text("Release Date: " + release_date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        releaseDate.setId("release_date");
 
-        LocalDate purchaseDate = LocalDate.parse(sneaker.getPurchase_date());
-        Text purchase_date = new Text("Purchase Date: " + purchaseDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-        purchase_date.setId("purchase_date");
+        LocalDate purchase_date = LocalDate.parse(sneaker.getPurchase_date());
+        Text purchaseDate = new Text("Purchase Date: " + purchase_date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        purchaseDate.setId("purchase_date");
 
         double priceValue = Double.parseDouble(sneaker.getPrice());
         Text price = new Text(String.format("Price: €%.2f", priceValue));
         price.setId("price");
 
-        sneakerInfo.getChildren().addAll(brand_id, model_id, size, release_date, purchase_date, price);
+        sneakerInfo.getChildren().addAll(brandText, modelText, size, releaseDate, purchaseDate, price);
         sneakerInfo.setId("sneaker_info");
         sneakerItem.getChildren().addAll(sneakerImage, sneakerInfo);
         sneakerItem.setId("sneaker_item");
@@ -164,41 +193,98 @@ public class Collection {
             User loggedInUser = Application.getLoggedInUser();
 
             if (loggedInUser != null) {
+
                 String query =
                         "SELECT * " +
                         "FROM sneaker s " +
                         "JOIN model m ON s.model_id = m.model_id " +
                         "JOIN brand b ON m.brand_id = b.brand_id " +
-                        "WHERE s.user_id = ? " +
-                        "ORDER BY s.sneaker_id ASC;";
+                        "WHERE s.user_id = ?";
 
-                ResultSet sneakerResult = Application.connection.query(query, loggedInUser.getUser_id());
-
-                while (sneakerResult.next()) {
-                    Sneaker sneaker = new Sneaker(sneakerResult);
-                    Model model = new Model(sneakerResult);
-                    Brand brand = new Brand(sneakerResult);
-
-                    Node sneakerItem = generateSneakerItem(sneaker, model, brand);
-                    sneakerItem.setOnMouseClicked(event -> {
-                        try {
-                            int sneakerId = Integer.parseInt(sneaker.getSneaker_id());
-                            showUpdate(sneakerId);
-                        } catch (NumberFormatException e) {
-                            e.printStackTrace();
-                        }
-                    });
-
-                    if (!sneakers.getChildren().contains(sneakerItem)) {
-                        sneakers.getChildren().add(sneakerItem);
+                if (comboBoxBrand.getValue() != null) {
+                    if(comboBoxBrand.getValue().toString() != "All") {
+                        query += " AND b.brand = ?";
                     }
+                    sneakers.getChildren().clear();
                 }
-                sneakerSection.getChildren().remove(pi);
+
+                query += " ORDER BY s.sneaker_id DESC;";
+
+                ResultSet sneakerResult = null;
+                if (comboBoxBrand.getValue() != null) {
+                    if(!comboBoxBrand.getValue().toString().equals("All")) {
+                        sneakerResult = Application.connection.query(query, loggedInUser.getUser_id(), comboBoxBrand.getValue());
+                    }else {
+                        sneakerResult = Application.connection.query(query, loggedInUser.getUser_id());
+                    }
+                }else {
+                    sneakerResult = Application.connection.query(query, loggedInUser.getUser_id());
+                }
+
+                if(sneakerResult != null) {
+                    while (sneakerResult.next()) {
+                        Sneaker sneaker = new Sneaker(sneakerResult);
+                        Model model = new Model(sneakerResult);
+                        Brand brand = new Brand(sneakerResult);
+
+                        Node sneakerItem = generateSneakerItem(sneaker, model, brand);
+                        sneakerItem.setOnMouseClicked(event -> {
+                            try {
+                                int sneakerId = Integer.parseInt(sneaker.getSneaker_id());
+                                showUpdateDelete(sneakerId);
+                            } catch (NumberFormatException e) {
+                                e.printStackTrace();
+                            }
+                        });
+
+                        if (!sneakers.getChildren().contains(sneakerItem)) {
+                            sneakers.getChildren().add(sneakerItem);
+                        }
+                    }
+                    sneakerSection.getChildren().remove(pi);
+                }
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
+
+    private void getDistinctBrands() {
+        try {
+            User loggedInUser = Application.getLoggedInUser();
+
+            if (loggedInUser != null) {
+                String query =
+                        "SELECT DISTINCT b.brand " +
+                        "FROM sneaker s " +
+                        "JOIN model m ON s.model_id = m.model_id " +
+                        "JOIN brand b ON m.brand_id = b.brand_id " +
+                        "WHERE s.user_id = ? " +
+                        "ORDER BY b.brand DESC;";
+
+                ResultSet brandResult = Application.connection.query(query, loggedInUser.getUser_id());
+
+                ObservableList<String> brandList = FXCollections.observableArrayList();
+                brandList.add("All");
+
+                while (brandResult.next()) {
+                    String brand = brandResult.getString("brand");
+                    brandList.add(brand);
+                }
+
+                Platform.runLater(() -> {
+                    comboBoxBrand.setItems(brandList);
+                    comboBoxBrand.setOnAction(event -> {
+                        getSneakers();
+                    });
+                });
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
 
     public Scene getCollectionScene() {
         return collectionScene;
@@ -212,9 +298,9 @@ public class Collection {
         Application.mainStage.setScene(scenes.get("Statistics"));
     }
 
-    private void showUpdate(int sneakerId) {
+    private void showUpdateDelete(int sneakerId) {
         UpdateDelete updateDeleteScreen = new UpdateDelete(sneakerId);
-        scenes.put("Update", updateDeleteScreen.getUpdateScene());
-        Application.mainStage.setScene(scenes.get("Update"));
+        scenes.put("UpdateDelete", updateDeleteScreen.getUpdateScene());
+        Application.mainStage.setScene(scenes.get("UpdateDelete"));
     }
 }

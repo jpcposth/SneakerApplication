@@ -64,7 +64,7 @@ public class UpdateDelete {
 
         VBox inputFields = new VBox(20);
         inputFields.setPadding(new Insets(50));
-        inputFields.relocate((applicationSize[0]-getNavBar().getPrefWidth())/2, 60 );
+        inputFields.relocate((applicationSize[0]-getNavBar().getPrefWidth())/2, 190);
         inputFields.setId("inputfields");
 
         TextField image = new TextField(imageInput);
@@ -260,7 +260,7 @@ public class UpdateDelete {
         navBar.setId("navbar");
         navBar.setOrientation(Orientation.HORIZONTAL);
         navBar.setPrefSize(250, Application.applicationSize[1]);
-        navBar.setPadding(new Insets(80, 0, 0, 0));
+        navBar.setPadding(new Insets(40, 0, 0, 0));
 
         navBar.getChildren().addAll(
                 generateNavItem("Collection", true, this::showCollection),

@@ -53,6 +53,16 @@
     -fx-background-color: #F7F7F7;
 }
 
+#scroll {
+    -fx-background-color: transparent;
+}
 
+#sneaker_section {
+    -fx-background-color: #FFFFFF;
+}
+
+#combo {
+    -fx-background-color: #3375CC;
+}
 
 

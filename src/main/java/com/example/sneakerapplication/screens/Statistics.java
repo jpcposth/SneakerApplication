@@ -33,28 +33,28 @@ public class Statistics {
 
     private Pane getStatistics() {
         HBox statistics = new HBox();
-        statistics.setSpacing(100);
+        statistics.setSpacing(175);
 
-        VBox leftStatistics = new VBox(20);
-        leftStatistics.setPadding(new Insets(45));
+        VBox leftStatistics = new VBox(25);
+        leftStatistics.setPadding(new Insets(50));
         leftStatistics.setId("statistics");
 
-        VBox rightStatistics = new VBox(20);
-        rightStatistics.setPadding(new Insets(45));
+        VBox rightStatistics = new VBox(25);
+        rightStatistics.setPadding(new Insets(50));
         rightStatistics.setId("statistics");
 
-        Text total_price = new Text(String.format("Total sneaker price: €%.2f", getTotalPrice()));
-        total_price.setId("statistics-text");
-        Text total_sneakers = new Text("Total sneakers amount: " + getTotalSneakers());
-        total_sneakers.setId("statistics-text");
-        Text brand_with_most_sneakers = new Text("The brand with the most sneakers: " + getBrandWithMostSneakers(Application.getLoggedInUser())[0]);
-        Text brand_with_most_sneakers_amount = new Text("Total sneaker amount from " + getBrandWithMostSneakers(Application.getLoggedInUser())[0] + ": " + getBrandWithMostSneakers(Application.getLoggedInUser())[1]);
+        Text totalPrice = new Text(String.format("Total sneaker price: €%.2f", getTotalPrice()));
+        totalPrice.setId("statistics-text");
+        Text totalSneakers = new Text("Total sneakers amount: " + getTotalSneakers());
+        totalSneakers.setId("statistics-text");
+        Text brandWithMostSneakers = new Text("The brand with the most sneakers: " + getBrandWithMostSneakers(Application.getLoggedInUser())[0]);
+        Text brandWithMostSneakersAmount = new Text("Total sneaker amount from " + getBrandWithMostSneakers(Application.getLoggedInUser())[0] + ": " + getBrandWithMostSneakers(Application.getLoggedInUser())[1]);
 
-        leftStatistics.getChildren().addAll(total_price, total_sneakers);
-        rightStatistics.getChildren().addAll(brand_with_most_sneakers, brand_with_most_sneakers_amount);
+        leftStatistics.getChildren().addAll(totalPrice, totalSneakers);
+        rightStatistics.getChildren().addAll(brandWithMostSneakers, brandWithMostSneakersAmount);
 
         statistics.getChildren().addAll(leftStatistics, rightStatistics);
-        statistics.relocate(350, 100);
+        statistics.relocate(425, 100);
 
         return statistics;
     }
@@ -133,7 +133,7 @@ public class Statistics {
         navBar.setId("navbar");
         navBar.setOrientation(Orientation.HORIZONTAL);
         navBar.setPrefSize(250, applicationSize[1]);
-        navBar.setPadding(new Insets(80, 0, 0, 0));
+        navBar.setPadding(new Insets(40, 0, 0, 0));
         navBar.getChildren().addAll(
                 generateNavItem("Collection", false, this::showCollection),
                 generateNavItem("Add", false, this::showAdd),

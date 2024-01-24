@@ -36,7 +36,7 @@ public class Add {
     private Pane showInput() {
         VBox inputFields = new VBox(20);
         inputFields.setPadding(new Insets(50));;
-        inputFields.relocate((applicationSize[0]-getNavBar().getPrefWidth())/2, 80);
+        inputFields.relocate((applicationSize[0]-getNavBar().getPrefWidth())/2, 210);
         inputFields.setId("inputfields");
 
         TextField image = new TextField();
@@ -59,15 +59,15 @@ public class Add {
         size.setId("input");
         size.setPrefWidth(400);
 
-        DatePicker release_date = new DatePicker();
-        release_date.setPromptText("Release date");
-        release_date.setId("input");
-        release_date.setPrefWidth(400);
+        DatePicker releaseDate = new DatePicker();
+        releaseDate.setPromptText("Release date");
+        releaseDate.setId("input");
+        releaseDate.setPrefWidth(400);
 
-        DatePicker purchase_date = new DatePicker();
-        purchase_date.setPromptText("Purchase date");
-        purchase_date.setId("input");
-        purchase_date.setPrefWidth(400);
+        DatePicker purchaseDate = new DatePicker();
+        purchaseDate.setPromptText("Purchase date");
+        purchaseDate.setId("input");
+        purchaseDate.setPrefWidth(400);
 
         TextField price = new TextField();
         price.setPromptText("Price");
@@ -79,14 +79,14 @@ public class Add {
         addButton.setPrefWidth(400);
         addButton.setOnAction(e -> {
             if (!image.getText().isEmpty() && !brand.getText().isEmpty() && !model.getText().isEmpty()
-                    && !size.getText().isEmpty() && release_date.getValue() != null
-                    && purchase_date.getValue() != null && !price.getText().isEmpty()) {
+                    && !size.getText().isEmpty() && releaseDate.getValue() != null
+                    && purchaseDate.getValue() != null && !price.getText().isEmpty()) {
 
-                LocalDate releaseDate = release_date.getValue();
-                String formattedReleaseDate = releaseDate.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+                LocalDate releaseDateFormat = releaseDate.getValue();
+                String formattedReleaseDate = releaseDateFormat.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
 
-                LocalDate purchaseDate = purchase_date.getValue();
-                String formattedPurchaseDate = purchaseDate.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+                LocalDate purchaseDateFormat = purchaseDate.getValue();
+                String formattedPurchaseDate = purchaseDateFormat.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
 
                 addSneaker(image.getText(), brand.getText(), model.getText(),
                         size.getText(), formattedReleaseDate, formattedPurchaseDate, price.getText());
@@ -95,7 +95,7 @@ public class Add {
                 showAlert("Please fill in all fields.");
             }
         });
-        inputFields.getChildren().addAll(image, brand, model, size, release_date, purchase_date, price, addButton);
+        inputFields.getChildren().addAll(image, brand, model, size, releaseDate, purchaseDate, price, addButton);
         return inputFields;
     }
 
@@ -172,7 +172,7 @@ public class Add {
         navBar.setId("navbar");
         navBar.setOrientation(Orientation.HORIZONTAL);
         navBar.setPrefSize(250, applicationSize[1]);
-        navBar.setPadding(new Insets(80, 0, 0, 0));
+        navBar.setPadding(new Insets(40, 0, 0, 0));
         navBar.getChildren().addAll(
                 generateNavItem("Collection", false, this::showCollection),
                 generateNavItem("Add", true, () -> {}),

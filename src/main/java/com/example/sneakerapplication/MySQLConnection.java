@@ -38,8 +38,6 @@ public class MySQLConnection {
             this.addConnection();
 
         PreparedStatement statement = this.connection.prepareStatement(query);
-
-        // Set parameters for the prepared statement
         for (int i = 0; i < parameters.length; i++) {
             statement.setObject(i + 1, parameters[i]);
         }
@@ -53,12 +51,10 @@ public class MySQLConnection {
         }
 
         try (PreparedStatement statement = this.connection.prepareStatement(query)) {
-            // Set parameters for the prepared statement
             for (int i = 0; i < parameters.length; i++) {
                 statement.setObject(i + 1, parameters[i]);
             }
 
-            // Execute the update query
             statement.executeUpdate();
         }
     }
