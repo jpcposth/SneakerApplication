@@ -299,7 +299,7 @@ public class Collection {
 
     private void showUpdateDelete(int sneakerId) {
         UpdateDelete updateDeleteScreen = new UpdateDelete(sneakerId);
-        scenes.put("UpdateDelete", updateDeleteScreen.getUpdateScene());
+        scenes.put("UpdateDelete", updateDeleteScreen.getUpdateDeleteScene());
         Application.mainStage.setScene(scenes.get("UpdateDelete"));
     }
 }

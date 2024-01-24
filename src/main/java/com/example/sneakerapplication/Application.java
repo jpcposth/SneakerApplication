@@ -3,6 +3,7 @@ package com.example.sneakerapplication;
 import com.example.sneakerapplication.classes.User;
 import com.example.sneakerapplication.screens.Add;
 import com.example.sneakerapplication.screens.Login;
+import com.example.sneakerapplication.screens.Register;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
@@ -26,7 +27,8 @@ public class Application extends javafx.application.Application {
     public void start(Stage stage) throws IOException {
         connection = new MySQLConnection("adainforma.tk", "3306", "bp2_sneakerapp", "sneakerapp", "f0oh4A9~9");
 
-        scenes.put("Login", new Login().getScene());
+        scenes.put("Login", new Login().getLoginScene());
+        scenes.put("Register", new Register().getRegisterScene());
         scenes.put("Add", new Add().getAddScene());
 
         mainStage = stage;

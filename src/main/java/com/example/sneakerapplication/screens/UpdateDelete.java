@@ -23,7 +23,7 @@ import static com.example.sneakerapplication.Application.applicationSize;
 import static com.example.sneakerapplication.Application.scenes;
 
 public class UpdateDelete {
-    private Scene updateScene;
+    private Scene updateDeleteScene;
     private int sneakerId;
 
     public UpdateDelete(int sneakerId) {
@@ -33,8 +33,8 @@ public class UpdateDelete {
 
         container.getChildren().addAll(getNavBar(), getInput());
 
-        updateScene = new Scene(container);
-        updateScene.getStylesheets().add(Application.class.getResource("stylesheets/updatedelete.css").toString());
+        updateDeleteScene = new Scene(container);
+        updateDeleteScene.getStylesheets().add(Application.class.getResource("stylesheets/updatedelete.css").toString());
     }
 
 
@@ -308,7 +308,7 @@ public class UpdateDelete {
         Application.mainStage.setScene(scenes.get("Statistics"));
     }
 
-    public Scene getUpdateScene() {
-        return updateScene;
+    public Scene getUpdateDeleteScene() {
+        return updateDeleteScene;
     }
 }

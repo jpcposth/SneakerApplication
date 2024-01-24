@@ -17,10 +17,6 @@
     -fx-text-fill: #3375CC;
 }
 
-.label {
-    -fx-text-fill: #FFFFFF;
-}
-
 #button {
     -fx-background-color: #3375CC;
     -fx-text-fill: #FFFFFF;

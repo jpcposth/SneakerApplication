@@ -5,10 +5,7 @@ import com.example.sneakerapplication.classes.User;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -23,35 +20,45 @@ public class Login {
 
     public Login() {
         HBox root = new HBox();
-        root.setId("login-root");
+        root.setId("root");
         root.setFillHeight(false);
         root.setAlignment(Pos.CENTER);
 
         VBox container = new VBox(20);
         container.setAlignment(Pos.CENTER);
         container.setPadding(new Insets(50));
-        container.setId("login-container");
+        container.setId("container");
 
         TextField usernameField = new TextField();
         usernameField.setPromptText("Username");
-        usernameField.setId("username-field");
+        usernameField.setId("username_field");
         usernameField.setPrefWidth(200);
 
         PasswordField passwordField = new PasswordField();
         passwordField.setPromptText("Password");
-        passwordField.setId("password-field");
+        passwordField.setId("password_field");
         passwordField.setPrefWidth(200);
 
         Button loginButton = new Button("Log in");
         loginButton.setId("button");
         loginButton.setPrefWidth(200);
         loginButton.setOnAction(e -> {
-            if (isValidCredentials(usernameField.getText(), passwordField.getText())) {
+            if (isValidInput(usernameField.getText(), passwordField.getText())) {
                 showCollection();
             }
         });
 
-        container.getChildren().addAll(usernameField, passwordField, loginButton);
+        Label registerLabel = new Label("Don't have an account?");
+
+        Button registerButton = new Button("Register");
+        registerButton.setId("button");
+        registerButton.setPrefWidth(200);
+        registerButton.setOnAction(e -> {
+            showRegister();
+        });
+
+
+        container.getChildren().addAll(usernameField, passwordField, loginButton, registerLabel, registerButton);
         root.getChildren().addAll(container);
 
         loginScene = new Scene(root);
@@ -59,7 +66,7 @@ public class Login {
     }
 
 
-    private boolean isValidCredentials(String username, String password) {
+    private boolean isValidInput(String username, String password) {
         if (username.isEmpty() || password.isEmpty()) {
             showAlert("Please fill in all fields.");
             return false;
@@ -104,8 +111,12 @@ public class Login {
         alert.showAndWait();
     }
 
-    public Scene getScene() {
+    public Scene getLoginScene() {
         return loginScene;
+    }
+
+    private void showRegister() {
+        Application.mainStage.setScene(scenes.get("Register"));
     }
 
     private void showCollection() {
