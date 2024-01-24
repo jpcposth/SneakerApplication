@@ -18,12 +18,9 @@ import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.TilePane;
+import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -37,7 +34,6 @@ public class Collection {
     private FlowPane sneakerSection;
     private TilePane sneakers;
     private Sneaker sneaker;
-    private ProgressIndicator pi;
     private ComboBox<String> comboBoxBrand;
 
     public Collection() {
@@ -50,6 +46,7 @@ public class Collection {
 
         collectionScene = new Scene(container);
         collectionScene.getStylesheets().add(Application.class.getResource("stylesheets/collection.css").toString());
+
 
         Platform.runLater(() -> {
             getDistinctBrands();
@@ -67,26 +64,21 @@ public class Collection {
 
     private ScrollPane getCollection() {
         sneakerSection = new FlowPane();
-        sneakerSection.setPadding(new Insets(40, 0, 40, 50));
+        sneakerSection.setPadding(new Insets(40, 0, 40, 45));
         sneakerSection.setId("sneaker_section");
         sneakerSection.setPrefSize(applicationSize [0]-getNavBar().getPrefWidth()-15, applicationSize [1]-37);
         sneakerSection.setVgap(40);
 
         sneakers = new TilePane();
-        sneakers.setHgap(50);
-        sneakers.setVgap(40);
+        sneakers.setHgap(45);
+        sneakers.setVgap(45);
         sneakers.setPrefColumns(4);
 
         comboBoxBrand = new ComboBox<>();
-        comboBoxBrand.setPromptText("Brand");
-        comboBoxBrand.setPrefWidth(250);
+        comboBoxBrand.setPromptText("Filter on brand");
+        comboBoxBrand.setPrefWidth(260);
         comboBoxBrand.setId("combo");
         comboBoxBrand.setVisibleRowCount(5);
-
-        pi = new ProgressIndicator();
-        pi.setMinWidth(applicationSize [0]-getNavBar().getPrefWidth());
-
-        sneakerSection.getChildren().addAll(pi);
 
         Platform.runLater(() -> {
             sneakerSection.getChildren().addAll(comboBoxBrand, sneakers);
@@ -143,47 +135,46 @@ public class Collection {
     public FlowPane generateSneakerItem(Sneaker sneaker, Model model, Brand brand) {
         FlowPane sneakerItem = new FlowPane();
         sneakerItem.setOrientation(Orientation.HORIZONTAL);
-        sneakerItem.setMaxSize(250, 350);
+        sneakerItem.setMaxSize(250, 250);
+        sneakerItem.setId("sneaker_item");
+
+        ProgressIndicator pi = new ProgressIndicator();
+        pi.setMinWidth(250);
 
         FlowPane sneakerImage = new FlowPane();
-        sneakerImage.setPrefSize(250, 250);
+        sneakerImage.setPrefSize(250, 100);
+        sneakerImage.getChildren().add(pi);
         ImageView sneakerImageView = new ImageView();
-        sneakerImageView.setImage(new Image(sneaker.getImage()));
         sneakerImageView.setPreserveRatio(true);
         sneakerImageView.setFitWidth(250);
-
-        sneakerImage.getChildren().add(sneakerImageView);
+        Platform.runLater(() -> {
+            sneakerImage.getChildren().remove(pi);
+            sneakerImageView.setImage(new Image(sneaker.getImage()));
+            sneakerImage.getChildren().add(sneakerImageView);
+        });
 
         FlowPane sneakerInfo = new FlowPane();
         sneakerInfo.setOrientation(Orientation.VERTICAL);
-        sneakerInfo.setPrefSize(250, 150);
+        sneakerInfo.setPrefSize(250, 136);
 
         Text brandText = new Text("Brand: " + brand.getBrand());
-        brandText.setId("brand_id");
 
         Text modelText = new Text("Model: " + model.getModel());
-        modelText.setId("model_id");
 
         double sizeValue = Double.parseDouble(sneaker.getSize());
         Text size = new Text(String.format("Size: %.1f", sizeValue));
-        size.setId("size");
 
         LocalDate release_date = LocalDate.parse(sneaker.getRelease_date());
         Text releaseDate = new Text("Release Date: " + release_date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-        releaseDate.setId("release_date");
 
         LocalDate purchase_date = LocalDate.parse(sneaker.getPurchase_date());
         Text purchaseDate = new Text("Purchase Date: " + purchase_date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-        purchaseDate.setId("purchase_date");
 
         double priceValue = Double.parseDouble(sneaker.getPrice());
         Text price = new Text(String.format("Price: €%.2f", priceValue));
-        price.setId("price");
 
         sneakerInfo.getChildren().addAll(brandText, modelText, size, releaseDate, purchaseDate, price);
-        sneakerInfo.setId("sneaker_info");
         sneakerItem.getChildren().addAll(sneakerImage, sneakerInfo);
-        sneakerItem.setId("sneaker_item");
 
         return sneakerItem;
     }
@@ -241,7 +232,6 @@ public class Collection {
                             sneakers.getChildren().add(sneakerItem);
                         }
                     }
-                    sneakerSection.getChildren().remove(pi);
                 }
             }
         } catch (SQLException e) {
@@ -272,11 +262,9 @@ public class Collection {
                     brandList.add(brand);
                 }
 
-                Platform.runLater(() -> {
-                    comboBoxBrand.setItems(brandList);
-                    comboBoxBrand.setOnAction(event -> {
-                        getSneakers();
-                    });
+                comboBoxBrand.setItems(brandList);
+                comboBoxBrand.setOnAction(event -> {
+                    getSneakers();
                 });
             }
         } catch (SQLException e) {

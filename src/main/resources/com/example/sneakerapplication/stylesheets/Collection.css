@@ -49,10 +49,6 @@
     -fx-background-color: #295EA3;
 }
 
-#sneaker_info {
-    -fx-background-color: #F7F7F7;
-}
-
 #scroll {
     -fx-background-color: transparent;
 }
@@ -61,8 +57,14 @@
     -fx-background-color: #FFFFFF;
 }
 
+#sneaker_item {
+    -fx-border-color: #3375CC;
+    -fx-border-width: 5px;
+}
+
 #combo {
     -fx-background-color: #3375CC;
 }
+
 
 
