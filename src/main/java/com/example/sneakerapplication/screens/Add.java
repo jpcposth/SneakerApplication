@@ -15,8 +15,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 import java.sql.*;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 import static com.example.sneakerapplication.Application.*;
 
@@ -27,13 +25,13 @@ public class Add {
         container.setId("container");
 
 
-        container.getChildren().addAll(getNavBar(),showInput());
+        container.getChildren().addAll(getNavBar(),getInput());
 
         addScene = new Scene(container);
         addScene.getStylesheets().add(Application.class.getResource("stylesheets/add.css").toString());
     }
 
-    private Pane showInput() {
+    private Pane getInput() {
         VBox inputFields = new VBox(20);
         inputFields.setPadding(new Insets(50));;
         inputFields.relocate((applicationSize[0]-getNavBar().getPrefWidth())/2, 210);
@@ -63,11 +61,13 @@ public class Add {
         releaseDate.setPromptText("Release date");
         releaseDate.setId("input");
         releaseDate.setPrefWidth(400);
+        releaseDate.setEditable(false);
 
         DatePicker purchaseDate = new DatePicker();
         purchaseDate.setPromptText("Purchase date");
         purchaseDate.setId("input");
         purchaseDate.setPrefWidth(400);
+        purchaseDate.setEditable(false);
 
         TextField price = new TextField();
         price.setPromptText("Price");
@@ -81,15 +81,8 @@ public class Add {
             if (!image.getText().isEmpty() && !brand.getText().isEmpty() && !model.getText().isEmpty()
                     && !size.getText().isEmpty() && releaseDate.getValue() != null
                     && purchaseDate.getValue() != null && !price.getText().isEmpty()) {
-
-                LocalDate releaseDateFormat = releaseDate.getValue();
-                String formattedReleaseDate = releaseDateFormat.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
-
-                LocalDate purchaseDateFormat = purchaseDate.getValue();
-                String formattedPurchaseDate = purchaseDateFormat.format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
-
                 addSneaker(image.getText(), brand.getText(), model.getText(),
-                        size.getText(), formattedReleaseDate, formattedPurchaseDate, price.getText());
+                        size.getText(), releaseDate.getValue().toString(), purchaseDate.getValue().toString(), price.getText());
                 showCollection();
             } else {
                 showAlert("Please fill in all fields.");
@@ -114,7 +107,7 @@ public class Add {
 
             }
         } catch (SQLException e) {
-            showAlert("Error adding sneaker: " + e.getMessage());
+            showAlert("Please fill in all fields correctly");
         }
     }
 

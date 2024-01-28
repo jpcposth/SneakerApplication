@@ -17,7 +17,6 @@ import javafx.scene.text.Text;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 import static com.example.sneakerapplication.Application.applicationSize;
 import static com.example.sneakerapplication.Application.scenes;
@@ -87,22 +86,19 @@ public class UpdateDelete {
         size.setId("input");
         size.setPrefWidth(400);
 
-        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DatePicker releaseDate = new DatePicker();
+        releaseDate.setValue(LocalDate.parse(releaseDateInput));
+        releaseDate.setPromptText("Release date");
+        releaseDate.setId("input");
+        releaseDate.setPrefWidth(400);
+        releaseDate.setEditable(false);
 
-        LocalDate releaseDate = LocalDate.parse(releaseDateInput, inputFormatter);
-        String formattedReleaseDate = releaseDate.format(outputFormatter);
-        DatePicker release_date = new DatePicker(LocalDate.parse(formattedReleaseDate, outputFormatter));
-        release_date.setPromptText("Release Date");
-        release_date.setId("input");
-        release_date.setPrefWidth(400);
-
-        LocalDate purchaseDate = LocalDate.parse(purchaseDateInput, inputFormatter);
-        String formattedPurchaseDate = purchaseDate.format(outputFormatter);
-        DatePicker purchase_date = new DatePicker(LocalDate.parse(formattedPurchaseDate, outputFormatter));
-        purchase_date.setPromptText("Purchase Date");
-        purchase_date.setId("input");
-        purchase_date.setPrefWidth(400);
+        DatePicker purchaseDate = new DatePicker();
+        purchaseDate.setValue(LocalDate.parse(purchaseDateInput));
+        purchaseDate.setPromptText("Purchase date");
+        purchaseDate.setId("input");
+        purchaseDate.setPrefWidth(400);
+        purchaseDate.setEditable(false);
 
         TextField price = new TextField(priceInput);
         price.setPromptText("Price");
@@ -121,7 +117,7 @@ public class UpdateDelete {
             confirmationDialog.showAndWait().ifPresent(result -> {
                     if (result == ButtonType.OK) {
                         updateSneaker(image.getText(), brand.getText(), model.getText(),
-                                size.getText(), release_date.getValue(), purchase_date.getValue(), price.getText());
+                                size.getText(), releaseDate.getValue(), purchaseDate.getValue(), price.getText());
                         showCollection();
                     }
             });
@@ -144,7 +140,7 @@ public class UpdateDelete {
             });
         });
 
-        inputFields.getChildren().addAll(image, brand, model, size, release_date, purchase_date, price, updateButton, deleteButton);
+        inputFields.getChildren().addAll(image, brand, model, size, releaseDate, purchaseDate, price, updateButton, deleteButton);
         return inputFields;
     }
 
@@ -182,7 +178,7 @@ public class UpdateDelete {
                 Application.connection.updateQuery(updateQuery, this.sneakerId);
             }
         } catch (SQLException e) {
-            showAlert("Error updating sneaker: " + e.getMessage());
+            showAlert("Please fill in all fields correctly");
         }
     }
 
@@ -200,7 +196,7 @@ public class UpdateDelete {
                 Application.connection.updateQuery(updateQuery, image, model.getModel_id(), size, releaseDate, purchaseDate, price, this.sneakerId);
             }
         } catch (SQLException e) {
-            showAlert("Error updating sneaker: " + e.getMessage());
+            showAlert("Please fill in all fields correctly");
         }
     }
 

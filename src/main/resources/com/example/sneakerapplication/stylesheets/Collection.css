@@ -66,5 +66,16 @@
     -fx-background-color: #3375CC;
 }
 
+#combo .list-cell:selected {
+    -fx-text-fill: #FFFFFF;
+    -fx-background-color: #3375CC;
+}
 
+#combo .arrow {
+    -fx-background-color: #FFFFFF;
+}
 
+#combo .list-cell:hover {
+    -fx-background-color: #F7F7F7;
+    -fx-text-fill: #050505;
+}
