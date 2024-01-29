@@ -58,6 +58,42 @@ public class Statistics {
 
         return statistics;
     }
+
+    private Pane getNavBar() {
+        FlowPane navBar = new FlowPane();
+        navBar.setId("navbar");
+        navBar.setOrientation(Orientation.HORIZONTAL);
+        navBar.setPrefSize(250, applicationSize[1]);
+        navBar.setPadding(new Insets(40, 0, 0, 0));
+        navBar.getChildren().addAll(
+                generateNavItem("Collection", false, this::showCollection),
+                generateNavItem("Add", false, this::showAdd),
+                generateNavItem("Statistics", true, () -> {}));
+        return navBar;
+    }
+
+    private FlowPane generateNavItem(String title, boolean active, Runnable onClick) {
+        FlowPane navItem = new FlowPane();
+        navItem.setId("nav_item");
+        navItem.setPadding(new Insets(0, 0, 0, 20));
+        navItem.setAlignment(Pos.CENTER_LEFT);
+        navItem.setPrefSize(250, 35);
+        navItem.setHgap(40);
+
+        Text navItemText = new Text(title);
+        navItemText.setId("nav_item_text");
+        navItem.getChildren().addAll(navItemText);
+
+        if (active) {
+            navItem.getStyleClass().add("active");
+        } else {
+            navItem.getStyleClass().add("inactive");
+        }
+
+        navItem.setOnMouseClicked(event -> onClick.run());
+
+        return navItem;
+    }
     private String[] getBrandWithMostSneakers(User user) {
         try {
             if (user != null) {
@@ -126,42 +162,6 @@ public class Statistics {
             e.printStackTrace();
         }
         return 0;
-    }
-
-    private Pane getNavBar() {
-        FlowPane navBar = new FlowPane();
-        navBar.setId("navbar");
-        navBar.setOrientation(Orientation.HORIZONTAL);
-        navBar.setPrefSize(250, applicationSize[1]);
-        navBar.setPadding(new Insets(40, 0, 0, 0));
-        navBar.getChildren().addAll(
-                generateNavItem("Collection", false, this::showCollection),
-                generateNavItem("Add", false, this::showAdd),
-                generateNavItem("Statistics", true, () -> {}));
-        return navBar;
-    }
-
-    private FlowPane generateNavItem(String title, boolean active, Runnable onClick) {
-        FlowPane navItem = new FlowPane();
-        navItem.setId("nav_item");
-        navItem.setPadding(new Insets(0, 0, 0, 20));
-        navItem.setAlignment(Pos.CENTER_LEFT);
-        navItem.setPrefSize(250, 35);
-        navItem.setHgap(40);
-
-        Text navItemText = new Text(title);
-        navItemText.setId("nav_item_text");
-        navItem.getChildren().addAll(navItemText);
-
-        if (active) {
-            navItem.getStyleClass().add("active");
-        } else {
-            navItem.getStyleClass().add("inactive");
-        }
-
-        navItem.setOnMouseClicked(event -> onClick.run());
-
-        return navItem;
     }
 
     public Scene getStatisticsScene() {

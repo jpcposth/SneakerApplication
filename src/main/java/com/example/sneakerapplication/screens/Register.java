@@ -26,6 +26,14 @@ public class Register {
         root.setFillHeight(false);
         root.setAlignment(Pos.CENTER);
 
+
+        root.getChildren().addAll(getRegister());
+
+        registerScene = new Scene(root);
+        registerScene.getStylesheets().add(Application.class.getResource("stylesheets/Register.css").toString());
+    }
+
+    public VBox getRegister() {
         VBox container = new VBox(20);
         container.setAlignment(Pos.CENTER);
         container.setPadding(new Insets(50));
@@ -58,10 +66,7 @@ public class Register {
         });
 
         container.getChildren().addAll(usernameField, passwordField, registerButton, backButton);
-        root.getChildren().addAll(container);
-
-        registerScene = new Scene(root);
-        registerScene.getStylesheets().add(Application.class.getResource("stylesheets/Register.css").toString());
+        return container;
     }
 
     private boolean isValidInput(String username, String password) {

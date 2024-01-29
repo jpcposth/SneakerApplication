@@ -33,6 +33,7 @@ public class UpdateDelete {
         container.getChildren().addAll(getNavBar(), getInput());
 
         updateDeleteScene = new Scene(container);
+        container.requestFocus();
         updateDeleteScene.getStylesheets().add(Application.class.getResource("stylesheets/UpdateDelete.css").toString());
     }
 

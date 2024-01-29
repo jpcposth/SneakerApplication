@@ -24,6 +24,14 @@ public class Login {
         root.setFillHeight(false);
         root.setAlignment(Pos.CENTER);
 
+        root.getChildren().addAll(getLogin());
+
+        loginScene = new Scene(root);
+        root.requestFocus();
+        loginScene.getStylesheets().add(Application.class.getResource("stylesheets/Login.css").toString());
+    }
+
+    public VBox getLogin() {
         VBox container = new VBox(20);
         container.setAlignment(Pos.CENTER);
         container.setPadding(new Insets(50));
@@ -57,12 +65,8 @@ public class Login {
             showRegister();
         });
 
-
         container.getChildren().addAll(usernameField, passwordField, loginButton, registerLabel, registerButton);
-        root.getChildren().addAll(container);
-
-        loginScene = new Scene(root);
-        loginScene.getStylesheets().add(Application.class.getResource("stylesheets/Login.css").toString());
+        return container;
     }
 
 

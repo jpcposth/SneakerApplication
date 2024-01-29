@@ -28,6 +28,7 @@ public class Add {
         container.getChildren().addAll(getNavBar(),getInput());
 
         addScene = new Scene(container);
+        container.requestFocus();
         addScene.getStylesheets().add(Application.class.getResource("stylesheets/Add.css").toString());
     }
 
@@ -90,6 +91,42 @@ public class Add {
         });
         inputFields.getChildren().addAll(image, brand, model, size, releaseDate, purchaseDate, price, addButton);
         return inputFields;
+    }
+
+    private Pane getNavBar() {
+        FlowPane navBar = new FlowPane();
+        navBar.setId("navbar");
+        navBar.setOrientation(Orientation.HORIZONTAL);
+        navBar.setPrefSize(250, applicationSize[1]);
+        navBar.setPadding(new Insets(40, 0, 0, 0));
+        navBar.getChildren().addAll(
+                generateNavItem("Collection", false, this::showCollection),
+                generateNavItem("Add", true, () -> {}),
+                generateNavItem("Statistics", false, this::showStatistics));
+        return navBar;
+    }
+
+    private FlowPane generateNavItem(String title, boolean active, Runnable onClick) {
+        FlowPane navItem = new FlowPane();
+        navItem.setId("nav_item");
+        navItem.setPadding(new Insets(0, 0, 0, 20));
+        navItem.setAlignment(Pos.CENTER_LEFT);
+        navItem.setPrefSize(250, 35);
+        navItem.setHgap(40);
+
+        Text navItemText = new Text(title);
+        navItemText.setId("nav_item_text");
+        navItem.getChildren().addAll(navItemText);
+
+        if (active) {
+            navItem.getStyleClass().add("active");
+        } else {
+            navItem.getStyleClass().add("inactive");
+        }
+
+        navItem.setOnMouseClicked(event -> onClick.run());
+
+        return navItem;
     }
 
     private void addSneaker(String image, String brandName, String modelName, String size, String releaseDate, String purchaseDate, String price) {
@@ -160,41 +197,6 @@ public class Add {
         alert.showAndWait();
     }
 
-    private Pane getNavBar() {
-        FlowPane navBar = new FlowPane();
-        navBar.setId("navbar");
-        navBar.setOrientation(Orientation.HORIZONTAL);
-        navBar.setPrefSize(250, applicationSize[1]);
-        navBar.setPadding(new Insets(40, 0, 0, 0));
-        navBar.getChildren().addAll(
-                generateNavItem("Collection", false, this::showCollection),
-                generateNavItem("Add", true, () -> {}),
-                generateNavItem("Statistics", false, this::showStatistics));
-        return navBar;
-    }
-
-    private FlowPane generateNavItem(String title, boolean active, Runnable onClick) {
-        FlowPane navItem = new FlowPane();
-        navItem.setId("nav_item");
-        navItem.setPadding(new Insets(0, 0, 0, 20));
-        navItem.setAlignment(Pos.CENTER_LEFT);
-        navItem.setPrefSize(250, 35);
-        navItem.setHgap(40);
-
-        Text navItemText = new Text(title);
-        navItemText.setId("nav_item_text");
-        navItem.getChildren().addAll(navItemText);
-
-        if (active) {
-            navItem.getStyleClass().add("active");
-        } else {
-            navItem.getStyleClass().add("inactive");
-        }
-
-        navItem.setOnMouseClicked(event -> onClick.run());
-
-        return navItem;
-    }
     public Scene getAddScene() {
         return addScene;
     }
