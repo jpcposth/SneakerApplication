@@ -52,7 +52,7 @@ public class Collection {
         });
 
         collectionScene = new Scene(container);
-        collectionScene.getStylesheets().add(Application.class.getResource("stylesheets/collection.css").toString());
+        collectionScene.getStylesheets().add(Application.class.getResource("stylesheets/Collection.css").toString());
     }
 
     private ScrollPane getCollection() {

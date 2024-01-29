@@ -28,7 +28,7 @@ public class Statistics {
         container.getChildren().addAll(getNavBar(), getStatistics());
 
         statisticsScene = new Scene(container);
-        statisticsScene.getStylesheets().add(Application.class.getResource("stylesheets/statistics.css").toString());
+        statisticsScene.getStylesheets().add(Application.class.getResource("stylesheets/Statistics.css").toString());
     }
 
     private Pane getStatistics() {

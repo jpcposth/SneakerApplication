@@ -62,7 +62,7 @@ public class Login {
         root.getChildren().addAll(container);
 
         loginScene = new Scene(root);
-        loginScene.getStylesheets().add(Application.class.getResource("stylesheets/login.css").toString());
+        loginScene.getStylesheets().add(Application.class.getResource("stylesheets/Login.css").toString());
     }
 
 

@@ -11,13 +11,6 @@ public class User {
         this.username = username;
         this.password = password;
     }
-
-    public User(ResultSet result) throws SQLException {
-        this.user_id = result.getString("user_id");
-        this.username = result.getString("username");
-        this.password = result.getString("password");
-    }
-
     public String getUser_id() {
         return user_id;
     }

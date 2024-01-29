@@ -35,12 +35,10 @@ public class MySQLConnection {
 
     public int update(String query, Object... params) throws SQLException {
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            // Set parameters for the query
             for (int i = 0; i < params.length; i++) {
                 preparedStatement.setObject(i + 1, params[i]);
             }
 
-            // Execute the update
             return preparedStatement.executeUpdate();
         }
     }

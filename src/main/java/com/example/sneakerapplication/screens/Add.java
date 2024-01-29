@@ -28,7 +28,7 @@ public class Add {
         container.getChildren().addAll(getNavBar(),getInput());
 
         addScene = new Scene(container);
-        addScene.getStylesheets().add(Application.class.getResource("stylesheets/add.css").toString());
+        addScene.getStylesheets().add(Application.class.getResource("stylesheets/Add.css").toString());
     }
 
     private Pane getInput() {

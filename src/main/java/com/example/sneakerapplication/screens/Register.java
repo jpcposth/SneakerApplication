@@ -61,7 +61,7 @@ public class Register {
         root.getChildren().addAll(container);
 
         registerScene = new Scene(root);
-        registerScene.getStylesheets().add(Application.class.getResource("stylesheets/register.css").toString());
+        registerScene.getStylesheets().add(Application.class.getResource("stylesheets/Register.css").toString());
     }
 
     private boolean isValidInput(String username, String password) {
