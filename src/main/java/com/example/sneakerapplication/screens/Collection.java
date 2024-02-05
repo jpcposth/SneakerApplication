@@ -28,21 +28,17 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-import static com.example.sneakerapplication.Application.applicationSize;
-import static com.example.sneakerapplication.Application.scenes;
+import static com.example.sneakerapplication.Application.*;
 
 public class Collection {
     private Scene collectionScene;
     private FlowPane sneakerSection;
     private TilePane sneakers;
-    private Sneaker sneaker;
     private ComboBox<String> comboBoxBrand;
 
     public Collection() {
         FlowPane container = new FlowPane(0, 0);
         container.setId("container");
-
-        sneaker = new Sneaker("", "", "", "", "", "", "", "");
 
         container.getChildren().addAll(getNavBar(), getCollection());
 
@@ -216,12 +212,12 @@ public class Collection {
                 ResultSet sneakerResult = null;
                 if (comboBoxBrand.getValue() != null) {
                     if(!comboBoxBrand.getValue().toString().equals("All")) {
-                        sneakerResult = Application.connection.query(query, loggedInUser.getUser_id(), comboBoxBrand.getValue());
+                        sneakerResult = connection.query(query, loggedInUser.getUser_id(), comboBoxBrand.getValue());
                     }else {
-                        sneakerResult = Application.connection.query(query, loggedInUser.getUser_id());
+                        sneakerResult = connection.query(query, loggedInUser.getUser_id());
                     }
                 }else {
-                    sneakerResult = Application.connection.query(query, loggedInUser.getUser_id());
+                    sneakerResult = connection.query(query, loggedInUser.getUser_id());
                 }
 
                 if(sneakerResult != null) {
@@ -264,7 +260,7 @@ public class Collection {
                         "WHERE s.user_id = ? " +
                         "ORDER BY b.brand DESC;";
 
-                ResultSet brandResult = Application.connection.query(query, loggedInUser.getUser_id());
+                ResultSet brandResult = connection.query(query, loggedInUser.getUser_id());
 
                 ObservableList<String> brandList = FXCollections.observableArrayList();
                 brandList.add("All");

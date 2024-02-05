@@ -18,8 +18,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 
-import static com.example.sneakerapplication.Application.applicationSize;
-import static com.example.sneakerapplication.Application.scenes;
+import static com.example.sneakerapplication.Application.*;
 
 public class UpdateDelete {
     private Scene updateDeleteScene;
@@ -38,7 +37,7 @@ public class UpdateDelete {
     }
 
 
-    private Pane getInput() {
+    public Pane getInput() {
         String imageInput = "";
         String brandInput = "";
         String modelInput = "";
@@ -145,7 +144,7 @@ public class UpdateDelete {
         return inputFields;
     }
 
-    private ResultSet getSneaker() {
+    public ResultSet getSneaker() {
         ResultSet sneakerResult = null;
 
         try {
@@ -158,8 +157,7 @@ public class UpdateDelete {
                         "JOIN model m ON s.model_id = m.model_id " +
                         "JOIN brand b ON m.brand_id = b.brand_id " +
                         "WHERE s.sneaker_id = '" + this.sneakerId + "';";
-                sneakerResult = Application.connection.query(query);
-
+                sneakerResult = connection.query(query);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -167,7 +165,7 @@ public class UpdateDelete {
         return sneakerResult;
     }
 
-    private void deleteSneaker() {
+    public void deleteSneaker() {
         try {
             User loggedInUser = Application.getLoggedInUser();
             if (loggedInUser != null) {
@@ -176,14 +174,14 @@ public class UpdateDelete {
                         "DELETE FROM sneaker " +
                         "WHERE sneaker_id = ?";
 
-                Application.connection.updateQuery(updateQuery, this.sneakerId);
+                connection.updateQuery(updateQuery, this.sneakerId);
             }
         } catch (SQLException e) {
             showAlert("Please fill in all fields correctly");
         }
     }
 
-    private void updateSneaker(String image, String brandName, String modelName, String size, LocalDate releaseDate, LocalDate purchaseDate, String price) {
+    public void updateSneaker(String image, String brandName, String modelName, String size, LocalDate releaseDate, LocalDate purchaseDate, String price) {
         try {
             User loggedInUser = Application.getLoggedInUser();
             if (loggedInUser != null) {
@@ -194,7 +192,7 @@ public class UpdateDelete {
                         "UPDATE sneaker " +
                         "SET image = ?, model_id = ?, size = ?, release_date = ?, purchase_date = ?, price = ? " +
                         "WHERE sneaker_id = ?";
-                Application.connection.updateQuery(updateQuery, image, model.getModel_id(), size, releaseDate, purchaseDate, price, this.sneakerId);
+                connection.updateQuery(updateQuery, image, model.getModel_id(), size, releaseDate, purchaseDate, price, this.sneakerId);
             }
         } catch (SQLException e) {
             showAlert("Please fill in all fields correctly");
@@ -202,12 +200,12 @@ public class UpdateDelete {
     }
 
 
-    private Brand updateBrand(String brandName) throws SQLException {
+    public Brand updateBrand(String brandName) throws SQLException {
         String brandQuery =
                 "SELECT * " +
                 "FROM brand " +
                 "WHERE brand = ?";
-        ResultSet brandResult = Application.connection.query(brandQuery, brandName);
+        ResultSet brandResult = connection.query(brandQuery, brandName);
 
         if (brandResult.next()) {
             return new Brand(brandResult);
@@ -215,20 +213,20 @@ public class UpdateDelete {
             String insertBrandQuery =
                     "INSERT INTO brand " +
                     "(brand) VALUES (?)";
-            Application.connection.updateQuery(insertBrandQuery, brandName);
+            connection.updateQuery(insertBrandQuery, brandName);
 
-            ResultSet insertedBrandResult = Application.connection.query(brandQuery, brandName);
+            ResultSet insertedBrandResult = connection.query(brandQuery, brandName);
             insertedBrandResult.next();
             return new Brand(insertedBrandResult);
         }
     }
 
-    private Model updateModel(String modelName, Brand brand) throws SQLException {
+    public Model updateModel(String modelName, Brand brand) throws SQLException {
         String modelQuery =
                 "SELECT * " +
                 "FROM model " +
                 "WHERE model = ? AND brand_id = ?";
-        ResultSet modelResult = Application.connection.query(modelQuery, modelName, brand.getBrand_id());
+        ResultSet modelResult = connection.query(modelQuery, modelName, brand.getBrand_id());
 
         if (modelResult.next()) {
             return new Model(modelResult);
@@ -237,22 +235,22 @@ public class UpdateDelete {
             String insertModelQuery =
                     "INSERT INTO model " +
                     "(model, brand_id) VALUES (?, ?)";
-            Application.connection.updateQuery(insertModelQuery, modelName, brand.getBrand_id());
+            connection.updateQuery(insertModelQuery, modelName, brand.getBrand_id());
 
-            ResultSet insertedModelResult = Application.connection.query(modelQuery, modelName, brand.getBrand_id());
+            ResultSet insertedModelResult = connection.query(modelQuery, modelName, brand.getBrand_id());
             insertedModelResult.next();
             return new Model(insertedModelResult);
         }
     }
 
-    private void showAlert(String message) {
+    public void showAlert(String message) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("Error");
         alert.setHeaderText(message);
         alert.showAndWait();
     }
 
-    private Pane getNavBar() {
+    public Pane getNavBar() {
         FlowPane navBar = new FlowPane();
         navBar.setId("navbar");
         navBar.setOrientation(Orientation.HORIZONTAL);
@@ -267,7 +265,7 @@ public class UpdateDelete {
         return navBar;
     }
 
-    private FlowPane generateNavItem(String title, boolean active, Runnable onClick) {
+    public FlowPane generateNavItem(String title, boolean active, Runnable onClick) {
         FlowPane navItem = new FlowPane();
         navItem.setId("nav_item");
         navItem.setPadding(new Insets(0, 0, 0, 20));
@@ -290,7 +288,9 @@ public class UpdateDelete {
 
         return navItem;
     }
-
+    public Scene getUpdateDeleteScene() {
+        return updateDeleteScene;
+    }
     private void showCollection() {
         scenes.put("Collection", new Collection().getCollectionScene());
         Application.mainStage.setScene(scenes.get("Collection"));
@@ -303,9 +303,5 @@ public class UpdateDelete {
     private void showStatistics() {
         scenes.put("Statistics", new Statistics().getStatisticsScene());
         Application.mainStage.setScene(scenes.get("Statistics"));
-    }
-
-    public Scene getUpdateDeleteScene() {
-        return updateDeleteScene;
     }
 }

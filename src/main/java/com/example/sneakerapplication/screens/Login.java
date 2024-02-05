@@ -12,6 +12,7 @@ import javafx.scene.layout.VBox;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import static com.example.sneakerapplication.Application.connection;
 import static com.example.sneakerapplication.Application.scenes;
 
 public class Login {
@@ -97,7 +98,7 @@ public class Login {
                 "FROM user " +
                 "WHERE username = ? AND password = ?";
 
-        ResultSet resultSet = Application.connection.query(query, username, password);
+        ResultSet resultSet = connection.query(query, username, password);
         if (resultSet.next()) {
             return new User(
                     resultSet.getString("user_id"),
@@ -108,7 +109,7 @@ public class Login {
         return null;
     }
 
-    private void showAlert(String message) {
+    public void showAlert(String message) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("Error");
         alert.setHeaderText(message);

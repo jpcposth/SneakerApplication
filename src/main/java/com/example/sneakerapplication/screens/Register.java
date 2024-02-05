@@ -15,6 +15,7 @@ import javafx.scene.layout.VBox;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import static com.example.sneakerapplication.Application.connection;
 import static com.example.sneakerapplication.Application.scenes;
 
 public class Register {
@@ -26,10 +27,10 @@ public class Register {
         root.setFillHeight(false);
         root.setAlignment(Pos.CENTER);
 
-
         root.getChildren().addAll(getRegister());
 
         registerScene = new Scene(root);
+        root.requestFocus();
         registerScene.getStylesheets().add(Application.class.getResource("stylesheets/Register.css").toString());
     }
 
@@ -69,7 +70,7 @@ public class Register {
         return container;
     }
 
-    private boolean isValidInput(String username, String password) {
+    public boolean isValidInput(String username, String password) {
         if (username.isEmpty() || password.isEmpty()) {
             showAlert("Please fill in all fields.");
             return false;
@@ -81,13 +82,13 @@ public class Register {
         return true;
     }
 
-    private boolean isUsernameExists(String username) {
+    public boolean isUsernameExists(String username) {
         try {
             String query =
                     "SELECT * " +
                     "FROM user " +
                     "WHERE username = ?";
-            ResultSet resultSet = Application.connection.query(query, username);
+            ResultSet resultSet = connection.query(query, username);
             return resultSet.next();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -95,12 +96,12 @@ public class Register {
         }
     }
 
-    private void registerUser(String username, String password) {
+    public void registerUser(String username, String password) {
         try {
             String query =
                     "INSERT INTO user (username, password) " +
                     "VALUES (?, ?)";
-            Application.connection.update(query, username, password);
+            connection.update(query, username, password);
 
             User registeredUser = authenticateUser(username, password);
 
@@ -117,13 +118,13 @@ public class Register {
         }
     }
 
-    private User authenticateUser(String username, String password) {
+    public User authenticateUser(String username, String password) {
         try {
             String query =
                     "SELECT * " +
                     "FROM user " +
                     "WHERE username = ? AND password = ?";
-            ResultSet resultSet = Application.connection.query(query, username, password);
+            ResultSet resultSet = connection.query(query, username, password);
 
             if (resultSet.next()) {
                 return new User(
@@ -139,7 +140,7 @@ public class Register {
     }
 
 
-    private void showAlert(String message) {
+    public void showAlert(String message) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("Error");
         alert.setHeaderText(message);

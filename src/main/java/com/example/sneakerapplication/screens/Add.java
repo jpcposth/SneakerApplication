@@ -1,6 +1,7 @@
 package com.example.sneakerapplication.screens;
 
 import com.example.sneakerapplication.Application;
+import com.example.sneakerapplication.MySQLConnection;
 import com.example.sneakerapplication.classes.Brand;
 import com.example.sneakerapplication.classes.Model;
 import com.example.sneakerapplication.classes.User;
@@ -32,7 +33,7 @@ public class Add {
         addScene.getStylesheets().add(Application.class.getResource("stylesheets/Add.css").toString());
     }
 
-    private Pane getInput() {
+    public Pane getInput() {
         VBox inputFields = new VBox(20);
         inputFields.setPadding(new Insets(50));;
         inputFields.relocate((applicationSize[0]-getNavBar().getPrefWidth())/2, 210);
@@ -93,7 +94,7 @@ public class Add {
         return inputFields;
     }
 
-    private Pane getNavBar() {
+    public Pane getNavBar() {
         FlowPane navBar = new FlowPane();
         navBar.setId("navbar");
         navBar.setOrientation(Orientation.HORIZONTAL);
@@ -106,7 +107,7 @@ public class Add {
         return navBar;
     }
 
-    private FlowPane generateNavItem(String title, boolean active, Runnable onClick) {
+    public FlowPane generateNavItem(String title, boolean active, Runnable onClick) {
         FlowPane navItem = new FlowPane();
         navItem.setId("nav_item");
         navItem.setPadding(new Insets(0, 0, 0, 20));
@@ -129,7 +130,7 @@ public class Add {
         return navItem;
     }
 
-    private void addSneaker(String image, String brandName, String modelName, String size, String releaseDate, String purchaseDate, String price) {
+    public void addSneaker(String image, String brandName, String modelName, String size, String releaseDate, String purchaseDate, String price) {
         try {
             User loggedInUser = Application.getLoggedInUser();
             if (loggedInUser != null) {
@@ -140,7 +141,7 @@ public class Add {
                 String insertQuery =
                         "INSERT INTO sneaker (image, user_id, model_id, size, release_date, purchase_date, price) " +
                         "VALUES (?, ?, ?, ?, ?, ?, ?)";
-                Application.connection.updateQuery(insertQuery, image, loggedInUser.getUser_id(), model.getModel_id(), size, releaseDate, purchaseDate, price);
+                connection.updateQuery(insertQuery, image, loggedInUser.getUser_id(), model.getModel_id(), size, releaseDate, purchaseDate, price);
 
             }
         } catch (SQLException e) {
@@ -148,12 +149,12 @@ public class Add {
         }
     }
 
-    private Brand addBrand(String brandName) throws SQLException {
+    public  Brand addBrand(String brandName) throws SQLException {
         String brandQuery =
                 "SELECT * " +
                 "FROM brand " +
                 "WHERE brand = ?";
-        ResultSet brandResult = Application.connection.query(brandQuery, brandName);
+        ResultSet brandResult = connection.query(brandQuery, brandName);
 
         if (brandResult.next()) {
             return new Brand(brandResult);
@@ -161,20 +162,20 @@ public class Add {
             String insertBrandQuery =
                     "INSERT INTO brand " +
                     "(brand) VALUES (?)";
-            Application.connection.updateQuery(insertBrandQuery, brandName);
+            connection.updateQuery(insertBrandQuery, brandName);
 
-            ResultSet insertedBrandResult = Application.connection.query(brandQuery, brandName);
+            ResultSet insertedBrandResult = connection.query(brandQuery, brandName);
             insertedBrandResult.next();
             return new Brand(insertedBrandResult);
         }
     }
 
-    private Model addModel(String modelName, Brand brand) throws SQLException {
+    public Model addModel(String modelName, Brand brand) throws SQLException {
         String modelQuery =
                 "SELECT * " +
                 "FROM model " +
                 "WHERE model = ? AND brand_id = ?";
-        ResultSet modelResult = Application.connection.query(modelQuery, modelName, brand.getBrand_id());
+        ResultSet modelResult = connection.query(modelQuery, modelName, brand.getBrand_id());
 
         if (modelResult.next()) {
             return new Model(modelResult);
@@ -182,15 +183,15 @@ public class Add {
             String insertModelQuery =
                     "INSERT INTO model " +
                     "(model, brand_id) VALUES (?, ?)";
-            Application.connection.updateQuery(insertModelQuery, modelName, brand.getBrand_id());
+            connection.updateQuery(insertModelQuery, modelName, brand.getBrand_id());
 
-            ResultSet insertedModelResult = Application.connection.query(modelQuery, modelName, brand.getBrand_id());
+            ResultSet insertedModelResult = connection.query(modelQuery, modelName, brand.getBrand_id());
             insertedModelResult.next();
             return new Model(insertedModelResult);
         }
     }
 
-    private void showAlert(String message) {
+    public void showAlert(String message) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("Error");
         alert.setHeaderText(message);

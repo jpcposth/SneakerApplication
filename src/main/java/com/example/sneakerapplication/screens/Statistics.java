@@ -15,8 +15,7 @@ import javafx.scene.text.Text;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import static com.example.sneakerapplication.Application.applicationSize;
-import static com.example.sneakerapplication.Application.scenes;
+import static com.example.sneakerapplication.Application.*;
 
 public class Statistics {
     private Scene statisticsScene;
@@ -31,7 +30,7 @@ public class Statistics {
         statisticsScene.getStylesheets().add(Application.class.getResource("stylesheets/Statistics.css").toString());
     }
 
-    private Pane getStatistics() {
+    public Pane getStatistics() {
         HBox statistics = new HBox();
         statistics.setSpacing(175);
 
@@ -59,7 +58,7 @@ public class Statistics {
         return statistics;
     }
 
-    private Pane getNavBar() {
+    public Pane getNavBar() {
         FlowPane navBar = new FlowPane();
         navBar.setId("navbar");
         navBar.setOrientation(Orientation.HORIZONTAL);
@@ -72,7 +71,7 @@ public class Statistics {
         return navBar;
     }
 
-    private FlowPane generateNavItem(String title, boolean active, Runnable onClick) {
+    public FlowPane generateNavItem(String title, boolean active, Runnable onClick) {
         FlowPane navItem = new FlowPane();
         navItem.setId("nav_item");
         navItem.setPadding(new Insets(0, 0, 0, 20));
@@ -94,20 +93,20 @@ public class Statistics {
 
         return navItem;
     }
-    private String[] getBrandWithMostSneakers(User user) {
+    public String[] getBrandWithMostSneakers(User user) {
         try {
             if (user != null) {
                 String query =
                         "SELECT brand.brand, COUNT(sneaker.sneaker_id) AS total_sneakers " +
-                                "FROM brand " +
-                                "JOIN model ON brand.brand_id = model.brand_id " +
-                                "JOIN sneaker ON model.model_id = sneaker.model_id " +
-                                "WHERE sneaker.user_id = ? " +
-                                "GROUP BY brand.brand " +
-                                "ORDER BY total_sneakers DESC " +
-                                "LIMIT 1";
+                        "FROM brand " +
+                        "JOIN model ON brand.brand_id = model.brand_id " +
+                        "JOIN sneaker ON model.model_id = sneaker.model_id " +
+                        "WHERE sneaker.user_id = ? " +
+                        "GROUP BY brand.brand " +
+                        "ORDER BY total_sneakers DESC " +
+                        "LIMIT 1";
 
-                ResultSet resultSet = Application.connection.query(query, user.getUser_id());
+                ResultSet resultSet = connection.query(query, user.getUser_id());
 
                 if (resultSet.next()) {
                     String brandName = resultSet.getString("brand");
@@ -122,7 +121,7 @@ public class Statistics {
     }
 
 
-    private double getTotalPrice() {
+    public double getTotalPrice() {
         try {
             User loggedInUser = Application.getLoggedInUser();
 
@@ -131,7 +130,7 @@ public class Statistics {
                         "SELECT SUM(price) AS total_price " +
                         "FROM sneaker " +
                         "WHERE user_id = ?";
-                ResultSet resultSet = Application.connection.query(query, loggedInUser.getUser_id());
+                ResultSet resultSet = connection.query(query, loggedInUser.getUser_id());
 
                 if (resultSet.next()) {
                     return resultSet.getDouble("total_price");
@@ -143,7 +142,7 @@ public class Statistics {
         return 0.0;
     }
 
-    private int getTotalSneakers() {
+    public int getTotalSneakers() {
         try {
             User loggedInUser = Application.getLoggedInUser();
 
@@ -152,7 +151,7 @@ public class Statistics {
                         "SELECT COUNT(sneaker_id) AS total_sneakers " +
                         "FROM sneaker " +
                         "WHERE user_id = ?";
-                ResultSet resultSet = Application.connection.query(query, loggedInUser.getUser_id());
+                ResultSet resultSet = connection.query(query, loggedInUser.getUser_id());
 
                 if (resultSet.next()) {
                     return resultSet.getInt("total_sneakers");
