@@ -12,14 +12,11 @@ Welcome to the Sneaker Application, a JavaFX-based application for managing your
   - [Collection](#collection)
   - [Add](#add)
   - [Statistics](#statistics)
-  - [Update or Delete a Sneaker](#updating-or-deleting-a-sneaker)
-    - [Updating a Sneaker](#updating-a-sneaker)
-    - [Deleting a Sneaker](#deleting-a-sneaker)
+  - [Updating a Sneaker](#updating-a-sneaker)
+  - [Deleting a Sneaker](#deleting-a-sneaker)
 - [Screens](#screens)
 - [Stylesheets](#stylesheets)
 - [Database](#database)
-- [Troubleshooting](#troubleshooting)
-- [License](#license)
 
 ## Features
 
@@ -33,21 +30,20 @@ Welcome to the Sneaker Application, a JavaFX-based application for managing your
 ## Login
 
 1. Launch the application.
-2. Enter your username and password.
+2. If you have an account, enter your username and password.
 3. Click the "Log in" button.
 
 ## Register
 
 1. Launch the application.
-2. Click the "Register" button on the login screen.
-3. Enter your desired username and password.
+2. If you don't have an account, click the "Register" button on the login screen.
+3. Enter your desired username and password. (The passwords aren't encrypted, so don't use a commen used password)
 4. Click the "Register" button.
 
 ## Collection
 
 1. Log in to access your collection.
 2. View your sneakers in an organized manner.
-3. Right-click on a sneaker to access additional options.
 
 ## Add
 
@@ -61,24 +57,16 @@ Welcome to the Sneaker Application, a JavaFX-based application for managing your
 1. Log in to access your collection.
 2. Click the "Statistics" button to view collection insights.
 
-## Updating or Deleting a Sneaker
+## Updating a Sneaker
 
-- Navigate to the "Collection" screen.
-- Find the sneaker you want to update or delete.
-- Right-click on the sneaker to reveal the context menu.
-- Choose either "Update" or "Delete" from the context menu.
+1. Click on the sneaker you want to update in the "Collection" screen.
+2. Change in the updated information for the sneaker in the provided fields.
+3. Click the "Update" button.
+4. Confirm the update in the displayed confirmation dialog.
 
-### Updating a Sneaker
+## Deleting a Sneaker
 
-1. Right-click on the sneaker you want to update in the "Collection" screen.
-2. Select "Update" from the context menu.
-3. Fill in the updated information for the sneaker in the provided fields.
-4. Click the "Update" button.
-5. Confirm the update in the displayed confirmation dialog.
-
-### Deleting a Sneaker
-
-1. Right-click on the sneaker you want to delete in the "Collection" screen.
+1. Click on the sneaker you want to delete in the "Collection" screen.
 2. Select "Delete" from the context menu.
 3. Confirm the deletion in the displayed confirmation dialog.
 
@@ -86,8 +74,8 @@ Welcome to the Sneaker Application, a JavaFX-based application for managing your
 
 - **Collection**: View and manage your sneaker collection.
 - **Add**: Add a new sneaker to your collection.
-- **Statistics**: Gain insights into your sneaker collection.
 - **Update/Delete**: Update or delete a specific sneaker.
+- **Statistics**: Gain insights into your sneaker collection.
 
 ## Stylesheets
 
@@ -97,10 +85,10 @@ Custom stylesheets are used to enhance the visual appeal of the application. Sty
 
 The application uses a database to store user information and sneaker details. The database schema and setup details are available in the code.
 
-## Troubleshooting
+## Roadmap
 
-If you encounter any issues, please check the troubleshooting section in the code or contact the application's support team.
+### Future Updates
 
-## License
-
-This project is licensed under the [LICENSE] license - see the LICENSE.md file for details.
+- **Expanded Statistics:**
+  - Explore the addition of more statistics to offer users deeper insights into their sneaker collection.
+  - Gather user feedback to prioritize the most requested statistics.
