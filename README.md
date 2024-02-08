@@ -25,6 +25,11 @@ Welcome to the Sneaker Application, a JavaFX-based application for managing your
 - **Statistics**: Gain insights into your collection with statistics on total price, total sneakers, and more.
 - **Update and Delete**: Modify or remove sneakers from your collection.
 
+# Installation Instructions
+
+1. Go to https://github.com/jpcposth/SneakerApplication/tree/main/out/artifacts/SneakerApplication_jar
+2. Download SneakerApplication.jar
+
 # Usage Guide
 
 ## Login
