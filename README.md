@@ -17,6 +17,7 @@ Welcome to the Sneaker Application, a JavaFX-based application for managing your
 - [Screens](#screens)
 - [Stylesheets](#stylesheets)
 - [Database](#database)
+- [Roadmap](#roadmap)
 
 ## Features
 
