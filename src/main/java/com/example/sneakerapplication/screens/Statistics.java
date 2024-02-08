@@ -24,16 +24,20 @@ public class Statistics {
         Pane container = new Pane();
         container.setId("container");
 
+        // Add navbar and statistics to the container
         container.getChildren().addAll(getNavBar(), getStatistics());
 
+        // Set the scene
         statisticsScene = new Scene(container);
         statisticsScene.getStylesheets().add(Application.class.getResource("stylesheets/Statistics.css").toString());
     }
 
     public Pane getStatistics() {
+        // Create HBox for statistics
         HBox statistics = new HBox();
         statistics.setSpacing(175);
 
+        // Create left and right VBox for statistics
         VBox leftStatistics = new VBox(25);
         leftStatistics.setPadding(new Insets(50));
         leftStatistics.setId("statistics");
@@ -42,6 +46,7 @@ public class Statistics {
         rightStatistics.setPadding(new Insets(50));
         rightStatistics.setId("statistics");
 
+        // Create Text for statistics
         Text totalPrice = new Text(String.format("Total sneaker price: €%.2f", getTotalPrice()));
         totalPrice.setId("statistics-text");
         Text totalSneakers = new Text("Total sneakers amount: " + getTotalSneakers());
@@ -49,15 +54,18 @@ public class Statistics {
         Text brandWithMostSneakers = new Text("The brand with the most sneakers: " + getBrandWithMostSneakers(Application.getLoggedInUser())[0]);
         Text brandWithMostSneakersAmount = new Text("Total sneaker amount from " + getBrandWithMostSneakers(Application.getLoggedInUser())[0] + ": " + getBrandWithMostSneakers(Application.getLoggedInUser())[1]);
 
+        // Add statistics to the VBox
         leftStatistics.getChildren().addAll(totalPrice, totalSneakers);
         rightStatistics.getChildren().addAll(brandWithMostSneakers, brandWithMostSneakersAmount);
 
+        // Add VBox to HBox
         statistics.getChildren().addAll(leftStatistics, rightStatistics);
         statistics.relocate(425, 100);
 
         return statistics;
     }
 
+    // Get navbar
     public Pane getNavBar() {
         FlowPane navBar = new FlowPane();
         navBar.setId("navbar");
@@ -71,6 +79,7 @@ public class Statistics {
         return navBar;
     }
 
+    // Generate nav item
     public FlowPane generateNavItem(String title, boolean active, Runnable onClick) {
         FlowPane navItem = new FlowPane();
         navItem.setId("nav_item");
@@ -93,6 +102,8 @@ public class Statistics {
 
         return navItem;
     }
+
+    // Get brand with most sneakers
     public String[] getBrandWithMostSneakers(User user) {
         try {
             if (user != null) {
@@ -120,7 +131,7 @@ public class Statistics {
         return new String[]{"", "0"};
     }
 
-
+    // Get total price
     public double getTotalPrice() {
         try {
             User loggedInUser = Application.getLoggedInUser();
@@ -142,6 +153,7 @@ public class Statistics {
         return 0.0;
     }
 
+    // Get total sneakers
     public int getTotalSneakers() {
         try {
             User loggedInUser = Application.getLoggedInUser();
@@ -163,15 +175,18 @@ public class Statistics {
         return 0;
     }
 
+    // Get statistics scene
     public Scene getStatisticsScene() {
         return statisticsScene;
     }
 
+    // Show the Collection screen
     private void showCollection() {
         scenes.put("Collection", new Collection().getCollectionScene());
         Application.mainStage.setScene(scenes.get("Collection"));
     }
 
+    // Show the Add screen
     private void showAdd() {
         Application.mainStage.setScene(scenes.get("Add"));
     }

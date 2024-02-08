@@ -25,19 +25,24 @@ public class Login {
         root.setFillHeight(false);
         root.setAlignment(Pos.CENTER);
 
+        // Add the login scene to the root
         root.getChildren().addAll(getLogin());
 
+        // Set the scene
         loginScene = new Scene(root);
         root.requestFocus();
         loginScene.getStylesheets().add(Application.class.getResource("stylesheets/Login.css").toString());
     }
 
+    // Get the login scene
     public VBox getLogin() {
+        // Create VBox for input fields
         VBox container = new VBox(20);
         container.setAlignment(Pos.CENTER);
         container.setPadding(new Insets(50));
         container.setId("container");
 
+        // Create input fields
         TextField usernameField = new TextField();
         usernameField.setPromptText("Username");
         usernameField.setId("username_field");
@@ -51,6 +56,8 @@ public class Login {
         Button loginButton = new Button("Log in");
         loginButton.setId("button");
         loginButton.setPrefWidth(200);
+
+        // Checks if input is valid
         loginButton.setOnAction(e -> {
             if (isValidInput(usernameField.getText(), passwordField.getText())) {
                 showCollection();
@@ -62,15 +69,22 @@ public class Login {
         Button registerButton = new Button("Register");
         registerButton.setId("button");
         registerButton.setPrefWidth(200);
+
+        // Goes to register screen
         registerButton.setOnAction(e -> {
             showRegister();
         });
 
+        // Add input fields to the container
         container.getChildren().addAll(usernameField, passwordField, loginButton, registerLabel, registerButton);
         return container;
     }
 
-
+    /**
+     * Checks if the input for user login is valid
+     * @param username the username input
+     * @param password the password input
+     */
     private boolean isValidInput(String username, String password) {
         if (username.isEmpty() || password.isEmpty()) {
             showAlert("Please fill in all fields.");
@@ -92,6 +106,11 @@ public class Login {
         return false;
     }
 
+    /**
+     * Authenticates the user with the provided username and password
+     * @param username the username to authenticate
+     * @param password the password to authenticate
+     */
     private User authenticateUser(String username, String password) throws SQLException {
         String query =
                 "SELECT * " +
@@ -109,6 +128,7 @@ public class Login {
         return null;
     }
 
+    // Show an alert
     public void showAlert(String message) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("Error");
@@ -116,14 +136,17 @@ public class Login {
         alert.showAndWait();
     }
 
+    // Get the login scene
     public Scene getLoginScene() {
         return loginScene;
     }
 
+    // Show the Register screen
     private void showRegister() {
         Application.mainStage.setScene(scenes.get("Register"));
     }
 
+    // Show the Collection screen
     private void showCollection() {
         scenes.put("Collection", new Collection().getCollectionScene());
         Application.mainStage.setScene(scenes.get("Collection"));

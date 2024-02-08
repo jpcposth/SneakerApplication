@@ -29,14 +29,16 @@ public class UpdateDelete {
         Pane container = new Pane();
         container.setId("container");
 
+        // Add navbar and input fields to the container
         container.getChildren().addAll(getNavBar(), getInput());
 
+        // Set the scene
         updateDeleteScene = new Scene(container);
         container.requestFocus();
         updateDeleteScene.getStylesheets().add(Application.class.getResource("stylesheets/UpdateDelete.css").toString());
     }
 
-
+    // Get the inputs
     public Pane getInput() {
         String imageInput = "";
         String brandInput = "";
@@ -61,11 +63,13 @@ public class UpdateDelete {
             throw new RuntimeException(e);
         }
 
+        // Create VBox for input fields
         VBox inputFields = new VBox(20);
         inputFields.setPadding(new Insets(50));
         inputFields.relocate((applicationSize[0]-getNavBar().getPrefWidth())/2, 190);
         inputFields.setId("inputfields");
 
+        // Create input fields
         TextField image = new TextField(imageInput);
         image.setPromptText("Image URL");
         image.setId("input");
@@ -108,6 +112,8 @@ public class UpdateDelete {
         Button updateButton = new Button("Update");
         updateButton.setId("button");
         updateButton.setPrefWidth(400);
+
+        // Show confirmation dialog before updating
         updateButton.setOnAction(e -> {
             Alert confirmationDialog = new Alert(Alert.AlertType.CONFIRMATION);
             confirmationDialog.setTitle("Confirmation");
@@ -123,6 +129,7 @@ public class UpdateDelete {
             });
         });
 
+        // Show confirmation dialog before deleting
         Button deleteButton = new Button("Delete");
         deleteButton.setId("button");
         deleteButton.setPrefWidth(400);
@@ -140,10 +147,12 @@ public class UpdateDelete {
             });
         });
 
+        // Add input fields to the VBox
         inputFields.getChildren().addAll(image, brand, model, size, releaseDate, purchaseDate, price, updateButton, deleteButton);
         return inputFields;
     }
 
+    // Get the sneaker
     public ResultSet getSneaker() {
         ResultSet sneakerResult = null;
 
@@ -165,6 +174,7 @@ public class UpdateDelete {
         return sneakerResult;
     }
 
+    // Delete a sneaker
     public void deleteSneaker() {
         try {
             User loggedInUser = Application.getLoggedInUser();
@@ -181,6 +191,7 @@ public class UpdateDelete {
         }
     }
 
+    // Update a sneaker
     public void updateSneaker(String image, String brandName, String modelName, String size, LocalDate releaseDate, LocalDate purchaseDate, String price) {
         try {
             User loggedInUser = Application.getLoggedInUser();
@@ -199,7 +210,7 @@ public class UpdateDelete {
         }
     }
 
-
+    // Update brand
     public Brand updateBrand(String brandName) throws SQLException {
         String brandQuery =
                 "SELECT * " +
@@ -221,6 +232,7 @@ public class UpdateDelete {
         }
     }
 
+    // Update model
     public Model updateModel(String modelName, Brand brand) throws SQLException {
         String modelQuery =
                 "SELECT * " +
@@ -243,6 +255,7 @@ public class UpdateDelete {
         }
     }
 
+    // Show an alert
     public void showAlert(String message) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("Error");
@@ -250,6 +263,7 @@ public class UpdateDelete {
         alert.showAndWait();
     }
 
+    // Get nav bar
     public Pane getNavBar() {
         FlowPane navBar = new FlowPane();
         navBar.setId("navbar");
@@ -265,6 +279,7 @@ public class UpdateDelete {
         return navBar;
     }
 
+    // Generate nav item
     public FlowPane generateNavItem(String title, boolean active, Runnable onClick) {
         FlowPane navItem = new FlowPane();
         navItem.setId("nav_item");
@@ -288,18 +303,24 @@ public class UpdateDelete {
 
         return navItem;
     }
+
+    // Get the scene
     public Scene getUpdateDeleteScene() {
         return updateDeleteScene;
     }
+
+    // Show the Collection screen
     private void showCollection() {
         scenes.put("Collection", new Collection().getCollectionScene());
         Application.mainStage.setScene(scenes.get("Collection"));
     }
 
+    // Show the Add screen
     private void showAdd() {
         Application.mainStage.setScene(scenes.get("Add"));
     }
 
+    // Show the Statistics screen
     private void showStatistics() {
         scenes.put("Statistics", new Statistics().getStatisticsScene());
         Application.mainStage.setScene(scenes.get("Statistics"));

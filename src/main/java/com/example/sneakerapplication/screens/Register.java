@@ -27,14 +27,18 @@ public class Register {
         root.setFillHeight(false);
         root.setAlignment(Pos.CENTER);
 
+        // Add the register scene to the root
         root.getChildren().addAll(getRegister());
 
+        // Set the scene
         registerScene = new Scene(root);
         root.requestFocus();
         registerScene.getStylesheets().add(Application.class.getResource("stylesheets/Register.css").toString());
     }
 
+    // Get the register scene
     public VBox getRegister() {
+        // Create VBox for input fields
         VBox container = new VBox(20);
         container.setAlignment(Pos.CENTER);
         container.setPadding(new Insets(50));
@@ -53,6 +57,8 @@ public class Register {
         Button registerButton = new Button("Register");
         registerButton.setId("button");
         registerButton.setPrefWidth(200);
+
+        // Check if the input is valid
         registerButton.setOnAction(e -> {
             if (isValidInput(usernameField.getText(), passwordField.getText())) {
                 registerUser(usernameField.getText(), passwordField.getText());
@@ -62,14 +68,22 @@ public class Register {
         Button backButton = new Button("Back");
         backButton.setId("button");
         backButton.setPrefWidth(200);
+
+        // Go back to the login screen
         backButton.setOnAction(e -> {
             showLogin();
         });
 
+        // Add the input fields to the container
         container.getChildren().addAll(usernameField, passwordField, registerButton, backButton);
         return container;
     }
 
+    /**
+     * Validates the input for registration
+     * @param username the username input
+     * @param password the password input
+     */
     public boolean isValidInput(String username, String password) {
         if (username.isEmpty() || password.isEmpty()) {
             showAlert("Please fill in all fields.");
@@ -82,6 +96,10 @@ public class Register {
         return true;
     }
 
+    /**
+     * Checks if the username already exists in the database
+     * @param username the username to check
+     */
     public boolean isUsernameExists(String username) {
         try {
             String query =
@@ -96,6 +114,11 @@ public class Register {
         }
     }
 
+    /**
+     * Registers a new user in the database
+     * @param username the username to register
+     * @param password the password to register
+     */
     public void registerUser(String username, String password) {
         try {
             String query =
@@ -118,6 +141,11 @@ public class Register {
         }
     }
 
+    /**
+     * Authenticates the user with the provided username and password
+     * @param username the username to authenticate
+     * @param password the password to authenticate
+     */
     public User authenticateUser(String username, String password) {
         try {
             String query =
@@ -139,7 +167,7 @@ public class Register {
         return null;
     }
 
-
+    // Show an alert
     public void showAlert(String message) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("Error");
@@ -147,15 +175,18 @@ public class Register {
         alert.showAndWait();
     }
 
+    // Get the register scene
     public Scene getRegisterScene() {
         return registerScene;
     }
 
+    // Show the Collection screen
     private void showCollection() {
         scenes.put("Collection", new Collection().getCollectionScene());
         Application.mainStage.setScene(scenes.get("Collection"));
     }
 
+    // Show the Login screen
     private void showLogin() {
         Application.mainStage.setScene(scenes.get("Login"));
     }

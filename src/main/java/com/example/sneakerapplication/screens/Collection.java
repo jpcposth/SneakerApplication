@@ -40,18 +40,24 @@ public class Collection {
         FlowPane container = new FlowPane(0, 0);
         container.setId("container");
 
+        // Add navbar and collection fields to the container
         container.getChildren().addAll(getNavBar(), getCollection());
 
+        //
         Platform.runLater(() -> {
             getDistinctBrands();
             getSneakers();
         });
 
+        // Set the scene
         collectionScene = new Scene(container);
+        container.requestFocus();
         collectionScene.getStylesheets().add(Application.class.getResource("stylesheets/Collection.css").toString());
     }
 
+    // Get the collection
     private ScrollPane getCollection() {
+        // Create the sneaker section
         sneakerSection = new FlowPane();
         sneakerSection.setPadding(new Insets(40, 0, 40, 45));
         sneakerSection.setId("sneaker_section");
@@ -63,6 +69,7 @@ public class Collection {
         sneakers.setVgap(45);
         sneakers.setPrefColumns(4);
 
+        // Create the filter
         comboBoxBrand = new ComboBox<>();
         comboBoxBrand.setPromptText("Filter on brand");
         comboBoxBrand.setPrefWidth(260);
@@ -83,6 +90,7 @@ public class Collection {
         return scrollPane;
     }
 
+    // Get navbar
     private Pane getNavBar() {
         FlowPane navBar = new FlowPane();
         navBar.setId("navbar");
@@ -98,6 +106,7 @@ public class Collection {
         return navBar;
     }
 
+    // Generate nav item
     private FlowPane generateNavItem(String title, boolean active, Runnable onClick) {
         FlowPane navItem = new FlowPane();
         navItem.setId("nav_item");
@@ -121,21 +130,26 @@ public class Collection {
         return navItem;
     }
 
+    // Generate sneaker item
     public FlowPane generateSneakerItem(Sneaker sneaker, Model model, Brand brand) {
         FlowPane sneakerItem = new FlowPane();
         sneakerItem.setOrientation(Orientation.HORIZONTAL);
         sneakerItem.setMaxSize(250, 250);
         sneakerItem.setId("sneaker_item");
 
+        // Create a progress indicator
         ProgressIndicator pi = new ProgressIndicator();
         pi.setMinWidth(250);
 
         FlowPane sneakerImage = new FlowPane();
         sneakerImage.setPrefSize(250, 100);
         sneakerImage.getChildren().add(pi);
+
         ImageView sneakerImageView = new ImageView();
         sneakerImageView.setPreserveRatio(true);
         sneakerImageView.setFitWidth(250);
+
+        // Load the sneaker image
         Service<Image> loadImageService = new Service<>() {
             @Override
             protected Task<Image> createTask() {
@@ -161,6 +175,7 @@ public class Collection {
         });
         loadImageService.start();
 
+        // Create the sneaker info
         FlowPane sneakerInfo = new FlowPane();
         sneakerInfo.setOrientation(Orientation.VERTICAL);
         sneakerInfo.setPrefSize(250, 136);
@@ -187,6 +202,7 @@ public class Collection {
         return sneakerItem;
     }
 
+    // Get all the sneakers from the database for the logged in user
     private void getSneakers() {
         try {
             User loggedInUser = Application.getLoggedInUser();
@@ -247,6 +263,7 @@ public class Collection {
         }
     }
 
+    // Get all the distinct brands from the database
     private void getDistinctBrands() {
         try {
             User loggedInUser = Application.getLoggedInUser();
@@ -281,18 +298,23 @@ public class Collection {
         }
     }
 
+    // Get the collection scene
     public Scene getCollectionScene() {
         return collectionScene;
     }
+
+    // Show the Add screen
     private void showAdd() {
         Application.mainStage.setScene(scenes.get("Add"));
     }
 
+    // Show the Statistics screen
     private void showStatistics() {
         scenes.put("Statistics", new Statistics().getStatisticsScene());
         Application.mainStage.setScene(scenes.get("Statistics"));
     }
 
+    // Show the UpdateDelete screen
     private void showUpdateDelete(int sneakerId) {
         UpdateDelete updateDeleteScreen = new UpdateDelete(sneakerId);
         scenes.put("UpdateDelete", updateDeleteScreen.getUpdateDeleteScene());

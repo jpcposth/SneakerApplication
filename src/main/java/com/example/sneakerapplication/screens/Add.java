@@ -1,7 +1,6 @@
 package com.example.sneakerapplication.screens;
 
 import com.example.sneakerapplication.Application;
-import com.example.sneakerapplication.MySQLConnection;
 import com.example.sneakerapplication.classes.Brand;
 import com.example.sneakerapplication.classes.Model;
 import com.example.sneakerapplication.classes.User;
@@ -25,20 +24,24 @@ public class Add {
         Pane container = new Pane();
         container.setId("container");
 
-
+        // Add navbar and input fields to the container
         container.getChildren().addAll(getNavBar(),getInput());
 
+        // Set the scene
         addScene = new Scene(container);
         container.requestFocus();
         addScene.getStylesheets().add(Application.class.getResource("stylesheets/Add.css").toString());
     }
 
+    // Get the inputs
     public Pane getInput() {
+        // Create VBox for input fields
         VBox inputFields = new VBox(20);
         inputFields.setPadding(new Insets(50));;
         inputFields.relocate((applicationSize[0]-getNavBar().getPrefWidth())/2, 210);
         inputFields.setId("inputfields");
 
+        // Create input fields
         TextField image = new TextField();
         image.setPromptText("Image URL");
         image.setId("input");
@@ -79,6 +82,8 @@ public class Add {
         Button addButton = new Button("Add");
         addButton.setId("add-button");
         addButton.setPrefWidth(400);
+
+        // Check if all fields are filled in
         addButton.setOnAction(e -> {
             if (!image.getText().isEmpty() && !brand.getText().isEmpty() && !model.getText().isEmpty()
                     && !size.getText().isEmpty() && releaseDate.getValue() != null
@@ -90,10 +95,13 @@ public class Add {
                 showAlert("Please fill in all fields.");
             }
         });
+
+        // Add input fields to the VBox
         inputFields.getChildren().addAll(image, brand, model, size, releaseDate, purchaseDate, price, addButton);
         return inputFields;
     }
 
+    // Get navbar
     public Pane getNavBar() {
         FlowPane navBar = new FlowPane();
         navBar.setId("navbar");
@@ -107,6 +115,7 @@ public class Add {
         return navBar;
     }
 
+    // Generate nav item
     public FlowPane generateNavItem(String title, boolean active, Runnable onClick) {
         FlowPane navItem = new FlowPane();
         navItem.setId("nav_item");
@@ -130,6 +139,7 @@ public class Add {
         return navItem;
     }
 
+    // Add a new sneaker to the database
     public void addSneaker(String image, String brandName, String modelName, String size, String releaseDate, String purchaseDate, String price) {
         try {
             User loggedInUser = Application.getLoggedInUser();
@@ -149,6 +159,7 @@ public class Add {
         }
     }
 
+    // Add a new brand to the database
     public  Brand addBrand(String brandName) throws SQLException {
         String brandQuery =
                 "SELECT * " +
@@ -170,6 +181,7 @@ public class Add {
         }
     }
 
+    // Add a new model to the database
     public Model addModel(String modelName, Brand brand) throws SQLException {
         String modelQuery =
                 "SELECT * " +
@@ -191,6 +203,7 @@ public class Add {
         }
     }
 
+    // Show an alert
     public void showAlert(String message) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("Error");
@@ -198,15 +211,18 @@ public class Add {
         alert.showAndWait();
     }
 
+    // Get the add scene
     public Scene getAddScene() {
         return addScene;
     }
 
+    // Show the Collection screen
     private void showCollection() {
         scenes.put("Collection", new Collection().getCollectionScene());
         Application.mainStage.setScene(scenes.get("Collection"));
     }
 
+    // Show the Statistics screen
     private void showStatistics() {
         scenes.put("Statistics", new Statistics().getStatisticsScene());
         Application.mainStage.setScene(scenes.get("Statistics"));
