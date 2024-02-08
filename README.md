@@ -55,7 +55,7 @@ Welcome to the Sneaker Application, a JavaFX-based application for managing your
 
 1. Log in to access your collection.
 2. Click the "Add" button.
-3. Fill in the sneaker details.
+3. Fill in the sneaker details. For the date click the calender
 4. Click the "Add" button.
 
 ## Statistics
@@ -66,7 +66,7 @@ Welcome to the Sneaker Application, a JavaFX-based application for managing your
 ## Updating a Sneaker
 
 1. Click on the sneaker you want to update in the "Collection" screen.
-2. Change in the updated information for the sneaker in the provided fields.
+2. Change the sneaker details. For the date click the calender
 3. Click the "Update" button.
 4. Confirm the update in the displayed confirmation dialog.
 
