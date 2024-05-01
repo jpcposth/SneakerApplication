@@ -27,6 +27,7 @@ public class Application extends javafx.application.Application {
     public void start(Stage stage) throws IOException {
         connection = new MySQLConnection("adainforma.tk", "3306", "bp2_sneakerapp", "sneakerapp", "f0oh4A9~9");
         connection.addConnection();
+//      Voor sneakers images https://hypeboost.com/nl
 
         scenes.put("Login", new Login().getLoginScene());
         scenes.put("Register", new Register().getRegisterScene());

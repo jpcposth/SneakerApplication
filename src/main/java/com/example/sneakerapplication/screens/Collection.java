@@ -61,7 +61,7 @@ public class Collection {
         sneakerSection = new FlowPane();
         sneakerSection.setPadding(new Insets(40, 0, 40, 45));
         sneakerSection.setId("sneaker_section");
-        sneakerSection.setPrefSize(applicationSize [0]-getNavBar().getPrefWidth()-15, applicationSize [1]-37);
+        sneakerSection.setPrefSize(applicationSize [0]-getNavBar().getPrefWidth()-16, applicationSize [1]-40);
         sneakerSection.setVgap(40);
 
         sneakers = new TilePane();
@@ -85,7 +85,7 @@ public class Collection {
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         scrollPane.setContent(sneakerSection);
-        scrollPane.setPrefSize(applicationSize [0]-getNavBar().getPrefWidth()-15, applicationSize [1]-37);
+        scrollPane.setPrefSize(applicationSize [0]-getNavBar().getPrefWidth()-16, applicationSize [1]-37);
 
         return scrollPane;
     }
@@ -223,7 +223,7 @@ public class Collection {
                     sneakers.getChildren().clear();
                 }
 
-                query += " ORDER BY s.sneaker_id DESC;";
+                query += " ORDER BY s.purchase_date DESC;";
 
                 ResultSet sneakerResult = null;
                 if (comboBoxBrand.getValue() != null) {
