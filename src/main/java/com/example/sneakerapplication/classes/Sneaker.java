@@ -37,14 +37,6 @@ public class Sneaker {
         return image;
     }
 
-    public int getUser_id() {
-        return user_id;
-    }
-
-    public int getModel_id() {
-        return model_id;
-    }
-
     public String getSize() {
         return size;
     }

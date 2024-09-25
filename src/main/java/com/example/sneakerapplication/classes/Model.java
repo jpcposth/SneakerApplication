@@ -26,8 +26,4 @@ public class Model {
     public String getModel() {
         return model;
     }
-
-    public int getBrand_id() {
-        return brand_id;
-    }
 }

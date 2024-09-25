@@ -10,16 +10,25 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 
 public class Database {
+    public MySQLConnection connection;
+
+    public Database () {
+        connection = MySQLConnection.getInstance("adainforma.tk", "3306", "bp2_sneakerapp", "sneakerapp", "f0oh4A9~9");
+        if (connection == null) {
+            System.out.println("Failed to connect to the database. Please check your connection settings.");
+        }
+    }
+
     public User authenticateUser(String username, String password) throws SQLException {
         // Hash the password before comparing it
         String hashedPassword = Register.PasswordUtils.hashPassword(password);
 
         String query =
                 "SELECT * " +
-                        "FROM user " +
-                        "WHERE username = ? AND password = ?";
+                "FROM user " +
+                "WHERE username = ? AND password = ?";
 
-        ResultSet resultSet = Application.connection.query(query, username, hashedPassword);
+        ResultSet resultSet = connection.query(query, username, hashedPassword);
         if (resultSet.next()) {
             return new User(
                     resultSet.getInt("user_id"),
@@ -38,8 +47,8 @@ public class Database {
 
             String query =
                     "INSERT INTO user (username, password) " +
-                            "VALUES (?, ?)";
-            Application.connection.update(query, username, hashedPassword);
+                    "VALUES (?, ?)";
+            connection.update(query, username, hashedPassword);
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -55,7 +64,7 @@ public class Database {
                     "SELECT * " +
                     "FROM user " +
                     "WHERE username = ?";
-            ResultSet resultSet = Application.connection.query(query, username);
+            ResultSet resultSet = connection.query(query, username);
             return resultSet.next();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -80,9 +89,9 @@ public class Database {
         query += " ORDER BY s.purchase_date DESC";
 
         if (brandFilter != null && !brandFilter.equals("All")) {
-            return Application.connection.query(query, loggedInUser.getUser_id(), brandFilter);
+            return connection.query(query, loggedInUser.getUser_id(), brandFilter);
         } else {
-            return Application.connection.query(query, loggedInUser.getUser_id());
+            return connection.query(query, loggedInUser.getUser_id());
         }
     }
 
@@ -96,7 +105,7 @@ public class Database {
                 "JOIN brand b ON m.brand_id = b.brand_id " +
                 "WHERE s.user_id = ? " +
                 "ORDER BY b.brand DESC;";
-        return Application.connection.query(query, loggedInUser.getUser_id());
+        return connection.query(query, loggedInUser.getUser_id());
     }
 
     // Add a new sneaker to the database
@@ -108,7 +117,7 @@ public class Database {
             String insertQuery =
                     "INSERT INTO sneaker (image, user_id, model_id, size, release_date, purchase_date, price) " +
                     "VALUES (?, ?, ?, ?, ?, ?, ?)";
-            Application.connection.updateQuery(insertQuery, image, loggedInUser.getUser_id(), model.getModel_id(), size, releaseDate, purchaseDate, price);
+            connection.updateQuery(insertQuery, image, loggedInUser.getUser_id(), model.getModel_id(), size, releaseDate, purchaseDate, price);
         }
     }
 
@@ -118,16 +127,16 @@ public class Database {
                 "SELECT * " +
                 "FROM brand " +
                 "WHERE brand = ?";
-        ResultSet brandResult = Application.connection.query(brandQuery, brandName);
+        ResultSet brandResult = connection.query(brandQuery, brandName);
 
         if (brandResult.next()) {
             return new Brand(brandResult);
         } else {
             String insertBrandQuery =
                     "INSERT INTO brand (brand) VALUES (?)";
-            Application.connection.updateQuery(insertBrandQuery, brandName);
+            connection.updateQuery(insertBrandQuery, brandName);
 
-            ResultSet insertedBrandResult = Application.connection.query(brandQuery, brandName);
+            ResultSet insertedBrandResult = connection.query(brandQuery, brandName);
             insertedBrandResult.next();
             return new Brand(insertedBrandResult);
         }
@@ -139,7 +148,7 @@ public class Database {
                 "SELECT * " +
                 "FROM model " +
                 "WHERE model = ? AND brand_id = ?";
-        ResultSet modelResult = Application.connection.query(modelQuery, modelName, brand.getBrand_id());
+        ResultSet modelResult = connection.query(modelQuery, modelName, brand.getBrand_id());
 
         if (modelResult.next()) {
             return new Model(modelResult);
@@ -147,9 +156,9 @@ public class Database {
             String insertModelQuery =
                     "INSERT INTO model (model, brand_id) " +
                     "VALUES (?, ?)";
-            Application.connection.updateQuery(insertModelQuery, modelName, brand.getBrand_id());
+            connection.updateQuery(insertModelQuery, modelName, brand.getBrand_id());
 
-            ResultSet insertedModelResult = Application.connection.query(modelQuery, modelName, brand.getBrand_id());
+            ResultSet insertedModelResult = connection.query(modelQuery, modelName, brand.getBrand_id());
             insertedModelResult.next();
             return new Model(insertedModelResult);
         }
@@ -163,7 +172,7 @@ public class Database {
                     "JOIN model m ON s.model_id = m.model_id " +
                     "JOIN brand b ON m.brand_id = b.brand_id " +
                     "WHERE s.sneaker_id = ?";
-            return Application.connection.query(query, sneakerId);
+            return connection.query(query, sneakerId);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -174,7 +183,7 @@ public class Database {
             String deleteQuery =
                     "DELETE FROM sneaker " +
                     "WHERE sneaker_id = ?";
-            Application.connection.updateQuery(deleteQuery, sneakerId);
+            connection.updateQuery(deleteQuery, sneakerId);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -190,7 +199,7 @@ public class Database {
                     "UPDATE sneaker " +
                     "SET image = ?, model_id = ?, size = ?, release_date = ?, purchase_date = ?, price = ? " +
                     "WHERE sneaker_id = ?";
-            Application.connection.updateQuery(updateQuery, image, model.getModel_id(), size, releaseDate, purchaseDate, price, sneakerId);
+            connection.updateQuery(updateQuery, image, model.getModel_id(), size, releaseDate, purchaseDate, price, sneakerId);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -203,7 +212,7 @@ public class Database {
                     "SELECT * " +
                     "FROM brand " +
                     "WHERE brand = ?";
-            ResultSet resultSet = Application.connection.query(checkBrandQuery, brandName);
+            ResultSet resultSet = connection.query(checkBrandQuery, brandName);
 
             // If brand exists, return the brand object
             if (resultSet.next()) {
@@ -215,10 +224,10 @@ public class Database {
             String insertBrandQuery =
                     "INSERT INTO brand (brand) " +
                     "VALUES (?)";
-            Application.connection.updateQuery(insertBrandQuery, brandName);
+            connection.updateQuery(insertBrandQuery, brandName);
 
             // Retrieve the inserted brand's ID
-            resultSet = Application.connection.query(checkBrandQuery, brandName);
+            resultSet = connection.query(checkBrandQuery, brandName);
             if (resultSet.next()) {
                 int brandId = resultSet.getInt("brand_id");
                 return new Brand(brandId, brandName);
@@ -237,7 +246,7 @@ public class Database {
                     "SELECT * " +
                     "FROM model " +
                     "WHERE model = ? AND brand_id = ?";
-            ResultSet resultSet = Application.connection.query(checkModelQuery, modelName, brand.getBrand_id()); // <-- This line
+            ResultSet resultSet = connection.query(checkModelQuery, modelName, brand.getBrand_id()); // <-- This line
 
             // If model exists, return the model object
             if (resultSet.next()) {
@@ -249,10 +258,10 @@ public class Database {
             String insertModelQuery =
                     "INSERT INTO model (model, brand_id) " +
                     "VALUES (?, ?)";
-            Application.connection.updateQuery(insertModelQuery, modelName, brand.getBrand_id());
+            connection.updateQuery(insertModelQuery, modelName, brand.getBrand_id());
 
             // Retrieve the inserted model's ID
-            resultSet = Application.connection.query(checkModelQuery, modelName, brand.getBrand_id());
+            resultSet = connection.query(checkModelQuery, modelName, brand.getBrand_id());
             if (resultSet.next()) {
                 int modelId = resultSet.getInt("model_id");
                 return new Model(modelId, modelName, brand.getBrand_id());
@@ -276,7 +285,7 @@ public class Database {
                     "ORDER BY total_sneakers DESC " +
                     "LIMIT 1";
 
-            ResultSet resultSet = Application.connection.query(query, user.getUser_id());
+            ResultSet resultSet = connection.query(query, user.getUser_id());
 
             if (resultSet.next()) {
                 String brandName = resultSet.getString("brand");
@@ -294,7 +303,7 @@ public class Database {
                     "SELECT SUM(price) AS total_price " +
                     "FROM sneaker " +
                     "WHERE user_id = ?";
-            ResultSet resultSet = Application.connection.query(query, user.getUser_id());
+            ResultSet resultSet = connection.query(query, user.getUser_id());
 
             if (resultSet.next()) {
                 return resultSet.getDouble("total_price");
@@ -310,7 +319,7 @@ public class Database {
                     "SELECT COUNT(sneaker_id) AS total_sneakers " +
                     "FROM sneaker " +
                     "WHERE user_id = ?";
-            ResultSet resultSet = Application.connection.query(query, user.getUser_id());
+            ResultSet resultSet = connection.query(query, user.getUser_id());
 
             if (resultSet.next()) {
                 return resultSet.getInt("total_sneakers");

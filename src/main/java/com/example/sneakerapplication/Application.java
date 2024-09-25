@@ -15,7 +15,6 @@ public class Application extends javafx.application.Application {
     private static User loggedInUser;
     public static Stage mainStage;
     public static HashMap<String, Scene> scenes = new HashMap<>();
-    public static MySQLConnection connection;
     public static int[] applicationSize = {1536, 960};
     public static User getLoggedInUser() {
         return loggedInUser;
@@ -25,12 +24,6 @@ public class Application extends javafx.application.Application {
     }
     @Override
     public void start(Stage stage) throws IOException {
-        connection = MySQLConnection.getInstance("adainforma.tk", "3306", "bp2_sneakerapp", "sneakerapp", "f0oh4A9~9");
-        if (connection == null) {
-            System.out.println("Failed to connect to the database. Please check your connection settings.");
-            return;
-        }
-
         scenes.put("Login", new Login().getLoginScene());
         scenes.put("Register", new Register().getRegisterScene());
         scenes.put("Add", new Add().getAddScene());
