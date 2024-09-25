@@ -28,8 +28,7 @@ Welcome to the Sneaker Application, a JavaFX-based application for managing your
 
 # Installation Instructions
 
-1. Go to [https://github.com/jpcposth/SneakerApplication/releases](https://github.com/jpcposth/SneakerApplication/releases/download/v2.0/SneakerApplication.jar)
-2. Download the jar file (SneakerApplication.jar) 
+1. Download the jar file [here](https://github.com/jpcposth/SneakerApplication/releases/download/v2.0/SneakerApplication.jar)
 
 # Usage Guide
 
