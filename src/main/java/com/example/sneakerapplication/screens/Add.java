@@ -1,9 +1,7 @@
 package com.example.sneakerapplication.screens;
 
 import com.example.sneakerapplication.Application;
-import com.example.sneakerapplication.classes.Brand;
-import com.example.sneakerapplication.classes.Model;
-import com.example.sneakerapplication.classes.User;
+import com.example.sneakerapplication.Database;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
@@ -20,7 +18,11 @@ import static com.example.sneakerapplication.Application.*;
 
 public class Add {
     private Scene addScene;
+    private Database database;
+
     public Add() {
+        database = new Database();
+
         Pane container = new Pane();
         container.setId("container");
 
@@ -88,13 +90,19 @@ public class Add {
             if (!image.getText().isEmpty() && !brand.getText().isEmpty() && !model.getText().isEmpty()
                     && !size.getText().isEmpty() && releaseDate.getValue() != null
                     && purchaseDate.getValue() != null && !price.getText().isEmpty()) {
-                addSneaker(image.getText(), brand.getText(), model.getText(),
-                        size.getText(), releaseDate.getValue().toString(), purchaseDate.getValue().toString(), price.getText());
-                showCollection();
+                try {
+                    database.addSneaker(image.getText(), brand.getText(), model.getText(),
+                            size.getText(), releaseDate.getValue().toString(), purchaseDate.getValue().toString(),
+                            price.getText(), Application.getLoggedInUser()); // Pass logged-in user here
+                    showCollection();
+                } catch (SQLException ex) {
+                    showAlert("Error while adding sneaker: " + ex.getMessage());
+                }
             } else {
                 showAlert("Please fill in all fields.");
             }
         });
+
 
         // Add input fields to the VBox
         inputFields.getChildren().addAll(image, brand, model, size, releaseDate, purchaseDate, price, addButton);
@@ -137,70 +145,6 @@ public class Add {
         navItem.setOnMouseClicked(event -> onClick.run());
 
         return navItem;
-    }
-
-    // Add a new sneaker to the database
-    public void addSneaker(String image, String brandName, String modelName, String size, String releaseDate, String purchaseDate, String price) {
-        try {
-            User loggedInUser = Application.getLoggedInUser();
-            if (loggedInUser != null) {
-                Brand brand = addBrand(brandName);
-
-                Model model = addModel(modelName, brand);
-
-                String insertQuery =
-                        "INSERT INTO sneaker (image, user_id, model_id, size, release_date, purchase_date, price) " +
-                        "VALUES (?, ?, ?, ?, ?, ?, ?)";
-                connection.updateQuery(insertQuery, image, loggedInUser.getUser_id(), model.getModel_id(), size, releaseDate, purchaseDate, price);
-
-            }
-        } catch (SQLException e) {
-            showAlert("Please fill in all fields correctly");
-        }
-    }
-
-    // Add a new brand to the database
-    public  Brand addBrand(String brandName) throws SQLException {
-        String brandQuery =
-                "SELECT * " +
-                "FROM brand " +
-                "WHERE brand = ?";
-        ResultSet brandResult = connection.query(brandQuery, brandName);
-
-        if (brandResult.next()) {
-            return new Brand(brandResult);
-        } else {
-            String insertBrandQuery =
-                    "INSERT INTO brand " +
-                    "(brand) VALUES (?)";
-            connection.updateQuery(insertBrandQuery, brandName);
-
-            ResultSet insertedBrandResult = connection.query(brandQuery, brandName);
-            insertedBrandResult.next();
-            return new Brand(insertedBrandResult);
-        }
-    }
-
-    // Add a new model to the database
-    public Model addModel(String modelName, Brand brand) throws SQLException {
-        String modelQuery =
-                "SELECT * " +
-                "FROM model " +
-                "WHERE model = ? AND brand_id = ?";
-        ResultSet modelResult = connection.query(modelQuery, modelName, brand.getBrand_id());
-
-        if (modelResult.next()) {
-            return new Model(modelResult);
-        } else {
-            String insertModelQuery =
-                    "INSERT INTO model " +
-                    "(model, brand_id) VALUES (?, ?)";
-            connection.updateQuery(insertModelQuery, modelName, brand.getBrand_id());
-
-            ResultSet insertedModelResult = connection.query(modelQuery, modelName, brand.getBrand_id());
-            insertedModelResult.next();
-            return new Model(insertedModelResult);
-        }
     }
 
     // Show an alert

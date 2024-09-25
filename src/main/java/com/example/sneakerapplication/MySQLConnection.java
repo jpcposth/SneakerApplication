@@ -4,6 +4,7 @@ import java.sql.*;
 import java.util.Properties;
 
 public class MySQLConnection {
+    private static MySQLConnection instance;
     private Connection connection;
     private final Properties properties;
 
@@ -14,6 +15,14 @@ public class MySQLConnection {
         this.properties.setProperty("database", database);
         this.properties.setProperty("user", username);
         this.properties.setProperty("password", password);
+        addConnection();
+    }
+
+    public static MySQLConnection getInstance(String hostname, String port, String database, String username, String password) {
+        if (instance == null) {
+            instance = new MySQLConnection(hostname, port, database, username, password);
+        }
+        return instance;
     }
 
     public void addConnection() {

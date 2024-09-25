@@ -1,6 +1,7 @@
 package com.example.sneakerapplication.screens;
 
 import com.example.sneakerapplication.Application;
+import com.example.sneakerapplication.Database;
 import com.example.sneakerapplication.classes.Brand;
 import com.example.sneakerapplication.classes.Model;
 import com.example.sneakerapplication.classes.Sneaker;
@@ -35,8 +36,11 @@ public class Collection {
     private FlowPane sneakerSection;
     private TilePane sneakers;
     private ComboBox<String> comboBoxBrand;
+    private Database database;
 
     public Collection() {
+        database = new Database();
+
         FlowPane container = new FlowPane(0, 0);
         container.setId("container");
 
@@ -206,59 +210,32 @@ public class Collection {
     private void getSneakers() {
         try {
             User loggedInUser = Application.getLoggedInUser();
-
             if (loggedInUser != null) {
+                String brandFilter = comboBoxBrand.getValue();
+                ResultSet sneakerResult = database.getSneakersForUser(loggedInUser, brandFilter);
 
-                String query =
-                        "SELECT * " +
-                        "FROM sneaker s " +
-                        "JOIN model m ON s.model_id = m.model_id " +
-                        "JOIN brand b ON m.brand_id = b.brand_id " +
-                        "WHERE s.user_id = ?";
+                sneakers.getChildren().clear(); // Clear the sneakers before adding new ones
 
-                if (comboBoxBrand.getValue() != null) {
-                    if(comboBoxBrand.getValue().toString() != "All") {
-                        query += " AND b.brand = ?";
-                    }
-                    sneakers.getChildren().clear();
-                }
+                while (sneakerResult.next()) {
+                    Sneaker sneaker = new Sneaker(sneakerResult);
+                    Model model = new Model(sneakerResult);
+                    Brand brand = new Brand(sneakerResult);
 
-                query += " ORDER BY s.purchase_date DESC;";
-
-                ResultSet sneakerResult = null;
-                if (comboBoxBrand.getValue() != null) {
-                    if(!comboBoxBrand.getValue().toString().equals("All")) {
-                        sneakerResult = connection.query(query, loggedInUser.getUser_id(), comboBoxBrand.getValue());
-                    }else {
-                        sneakerResult = connection.query(query, loggedInUser.getUser_id());
-                    }
-                }else {
-                    sneakerResult = connection.query(query, loggedInUser.getUser_id());
-                }
-
-                if(sneakerResult != null) {
-                    while (sneakerResult.next()) {
-                        Sneaker sneaker = new Sneaker(sneakerResult);
-                        Model model = new Model(sneakerResult);
-                        Brand brand = new Brand(sneakerResult);
-
-                        Node sneakerItem = generateSneakerItem(sneaker, model, brand);
-                        sneakerItem.setOnMouseClicked(event -> {
-                            try {
-                                int sneakerId = Integer.parseInt(sneaker.getSneaker_id());
-                                showUpdateDelete(sneakerId);
-                            } catch (NumberFormatException e) {
-                                e.printStackTrace();
-                            }
-                        });
-
-                        if (!sneakers.getChildren().contains(sneakerItem)) {
-                            sneakers.getChildren().add(sneakerItem);
+                    Node sneakerItem = generateSneakerItem(sneaker, model, brand);
+                    sneakerItem.setOnMouseClicked(event -> {
+                        try {
+                            int sneakerId = sneaker.getSneaker_id();
+                            showUpdateDelete(sneakerId);
+                        } catch (NumberFormatException e) {
+                            e.printStackTrace();
                         }
-                    }
+                    });
+
+                    sneakers.getChildren().add(sneakerItem); // Add the sneaker item to the UI
                 }
             }
         } catch (SQLException e) {
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
@@ -267,17 +244,8 @@ public class Collection {
     private void getDistinctBrands() {
         try {
             User loggedInUser = Application.getLoggedInUser();
-
             if (loggedInUser != null) {
-                String query =
-                        "SELECT DISTINCT b.brand " +
-                        "FROM sneaker s " +
-                        "JOIN model m ON s.model_id = m.model_id " +
-                        "JOIN brand b ON m.brand_id = b.brand_id " +
-                        "WHERE s.user_id = ? " +
-                        "ORDER BY b.brand DESC;";
-
-                ResultSet brandResult = connection.query(query, loggedInUser.getUser_id());
+                ResultSet brandResult = database.getDistinctBrandsForUser(loggedInUser);
 
                 ObservableList<String> brandList = FXCollections.observableArrayList();
                 brandList.add("All");
@@ -288,15 +256,14 @@ public class Collection {
                 }
 
                 comboBoxBrand.setItems(brandList);
-                comboBoxBrand.setOnAction(event -> {
-                    getSneakers();
-                });
+                comboBoxBrand.setOnAction(event -> getSneakers()); // Refresh sneakers on brand filter change
             }
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException(e);
         }
     }
+
 
     // Get the collection scene
     public Scene getCollectionScene() {

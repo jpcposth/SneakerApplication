@@ -1,6 +1,7 @@
 package com.example.sneakerapplication.screens;
 
 import com.example.sneakerapplication.Application;
+import com.example.sneakerapplication.Database;
 import com.example.sneakerapplication.classes.User;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -12,16 +13,19 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
-import java.sql.ResultSet;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 
-import static com.example.sneakerapplication.Application.connection;
 import static com.example.sneakerapplication.Application.scenes;
 
 public class Register {
     private Scene registerScene;
+    private Database database;
 
     public Register() {
+        database = new Database();
+
         HBox root = new HBox();
         root.setId("root");
         root.setFillHeight(false);
@@ -61,7 +65,11 @@ public class Register {
         // Check if the input is valid
         registerButton.setOnAction(e -> {
             if (isValidInput(usernameField.getText(), passwordField.getText())) {
-                registerUser(usernameField.getText(), passwordField.getText());
+                try {
+                    registerUser(usernameField.getText(), passwordField.getText());
+                } catch (SQLException ex) {
+                    showAlert("An error occurred during registration. Please try again.");
+                }
             }
         });
 
@@ -79,92 +87,56 @@ public class Register {
         return container;
     }
 
-    /**
-     * Validates the input for registration
-     * @param username the username input
-     * @param password the password input
-     */
     public boolean isValidInput(String username, String password) {
         if (username.isEmpty() || password.isEmpty()) {
             showAlert("Please fill in all fields.");
             return false;
         }
-        if (isUsernameExists(username)) {
+        if (database.isUsernameExists(username)) {
             showAlert("Username is already taken. Please choose another one.");
             return false;
         }
         return true;
     }
 
-    /**
-     * Checks if the username already exists in the database
-     * @param username the username to check
-     */
-    public boolean isUsernameExists(String username) {
-        try {
-            String query =
-                    "SELECT * " +
-                    "FROM user " +
-                    "WHERE username = ?";
-            ResultSet resultSet = connection.query(query, username);
-            return resultSet.next();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+    public class PasswordUtils {
+        public static String hashPassword(String password) {
+            try {
+                MessageDigest digest = MessageDigest.getInstance("SHA-256");
+                byte[] encodedHash = digest.digest(password.getBytes());
+                return bytesToHex(encodedHash);
+            } catch (NoSuchAlgorithmException e) {
+                throw new RuntimeException("Error hashing password", e);
+            }
+        }
+
+        private static String bytesToHex(byte[] hash) {
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hash) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) {
+                    hexString.append('0');
+                }
+                hexString.append(hex);
+            }
+            return hexString.toString();
         }
     }
 
-    /**
-     * Registers a new user in the database
-     * @param username the username to register
-     * @param password the password to register
-     */
-    public void registerUser(String username, String password) {
-        try {
-            String query =
-                    "INSERT INTO user (username, password) " +
-                    "VALUES (?, ?)";
-            connection.update(query, username, password);
 
-            User registeredUser = authenticateUser(username, password);
+    public void registerUser(String username, String password) throws SQLException {
+        if (database.registerUser(username, password)) { // Use the Database method
+            User registeredUser = database.authenticateUser(username, password); // Use the Database method
 
             if (registeredUser != null) {
                 Application.setUser(registeredUser);
-
                 showCollection();
             } else {
                 showAlert("An error occurred during registration. Please try again.");
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } else {
             showAlert("An error occurred during registration. Please try again.");
         }
-    }
-
-    /**
-     * Authenticates the user with the provided username and password
-     * @param username the username to authenticate
-     * @param password the password to authenticate
-     */
-    public User authenticateUser(String username, String password) {
-        try {
-            String query =
-                    "SELECT * " +
-                    "FROM user " +
-                    "WHERE username = ? AND password = ?";
-            ResultSet resultSet = connection.query(query, username, password);
-
-            if (resultSet.next()) {
-                return new User(
-                        resultSet.getString("user_id"),
-                        resultSet.getString("username"),
-                        resultSet.getString("password")
-                );
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     // Show an alert

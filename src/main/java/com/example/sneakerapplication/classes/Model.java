@@ -4,21 +4,22 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class Model {
-    private final String model_id, model, brand_id;
+    private final String model;
+    private final int model_id, brand_id;
 
-    public Model(String model_id, String model, String brand_id) {
+    public Model(int model_id, String model, int brand_id) {
         this.model_id = model_id;
         this.model = model;
         this.brand_id = brand_id;
     }
 
     public Model(ResultSet result) throws SQLException {
-        this.model_id = result.getString("model_id");
+        this.model_id = result.getInt("model_id");
         this.model = result.getString("model");
-        this.brand_id = result.getString("brand_id");
+        this.brand_id = result.getInt("brand_id");
     }
 
-    public String getModel_id() {
+    public int getModel_id() {
         return model_id;
     }
 
@@ -26,7 +27,7 @@ public class Model {
         return model;
     }
 
-    public String getBrand_id() {
+    public int getBrand_id() {
         return brand_id;
     }
 }

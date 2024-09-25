@@ -1,6 +1,7 @@
 package com.example.sneakerapplication.screens;
 
 import com.example.sneakerapplication.Application;
+import com.example.sneakerapplication.Database;
 import com.example.sneakerapplication.classes.Brand;
 import com.example.sneakerapplication.classes.Model;
 import com.example.sneakerapplication.classes.User;
@@ -23,8 +24,11 @@ import static com.example.sneakerapplication.Application.*;
 public class UpdateDelete {
     private Scene updateDeleteScene;
     private int sneakerId;
+    private Database database;
 
     public UpdateDelete(int sneakerId) {
+        database = new Database();
+
         this.sneakerId = sneakerId;
         Pane container = new Pane();
         container.setId("container");
@@ -48,7 +52,7 @@ public class UpdateDelete {
         String purchaseDateInput = "";
         String priceInput = "";
 
-        ResultSet sneakerResult = getSneaker();
+        ResultSet sneakerResult = database.getSneakerById(sneakerId);
         try {
             if (sneakerResult.next()) {
                 imageInput = sneakerResult.getString("image");
@@ -121,13 +125,15 @@ public class UpdateDelete {
             confirmationDialog.setContentText("Are you sure you want to update this sneaker?");
 
             confirmationDialog.showAndWait().ifPresent(result -> {
-                    if (result == ButtonType.OK) {
-                        updateSneaker(image.getText(), brand.getText(), model.getText(),
-                                size.getText(), releaseDate.getValue(), purchaseDate.getValue(), price.getText());
-                        showCollection();
-                    }
+                if (result == ButtonType.OK) {
+                    // Pass sneakerId as the first argument
+                    database.updateSneaker(sneakerId, image.getText(), brand.getText(), model.getText(),
+                            size.getText(), releaseDate.getValue(), purchaseDate.getValue(), price.getText());
+                    showCollection();
+                }
             });
         });
+
 
         // Show confirmation dialog before deleting
         Button deleteButton = new Button("Delete");
@@ -141,7 +147,7 @@ public class UpdateDelete {
 
             confirmationDialog.showAndWait().ifPresent(result -> {
                 if (result == ButtonType.OK) {
-                    deleteSneaker();
+                    database.deleteSneaker(sneakerId);
                     showCollection();
                 }
             });
@@ -150,109 +156,6 @@ public class UpdateDelete {
         // Add input fields to the VBox
         inputFields.getChildren().addAll(image, brand, model, size, releaseDate, purchaseDate, price, updateButton, deleteButton);
         return inputFields;
-    }
-
-    // Get the sneaker
-    public ResultSet getSneaker() {
-        ResultSet sneakerResult = null;
-
-        try {
-            User loggedInUser = Application.getLoggedInUser();
-
-            if (loggedInUser != null) {
-                String query =
-                        "SELECT * " +
-                        "FROM sneaker s " +
-                        "JOIN model m ON s.model_id = m.model_id " +
-                        "JOIN brand b ON m.brand_id = b.brand_id " +
-                        "WHERE s.sneaker_id = '" + this.sneakerId + "';";
-                sneakerResult = connection.query(query);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return sneakerResult;
-    }
-
-    // Delete a sneaker
-    public void deleteSneaker() {
-        try {
-            User loggedInUser = Application.getLoggedInUser();
-            if (loggedInUser != null) {
-
-                String updateQuery =
-                        "DELETE FROM sneaker " +
-                        "WHERE sneaker_id = ?";
-
-                connection.updateQuery(updateQuery, this.sneakerId);
-            }
-        } catch (SQLException e) {
-            showAlert("Please fill in all fields correctly");
-        }
-    }
-
-    // Update a sneaker
-    public void updateSneaker(String image, String brandName, String modelName, String size, LocalDate releaseDate, LocalDate purchaseDate, String price) {
-        try {
-            User loggedInUser = Application.getLoggedInUser();
-            if (loggedInUser != null) {
-                Brand brand = updateBrand(brandName);
-                Model model = updateModel(modelName, brand);
-
-                String updateQuery =
-                        "UPDATE sneaker " +
-                        "SET image = ?, model_id = ?, size = ?, release_date = ?, purchase_date = ?, price = ? " +
-                        "WHERE sneaker_id = ?";
-                connection.updateQuery(updateQuery, image, model.getModel_id(), size, releaseDate, purchaseDate, price, this.sneakerId);
-            }
-        } catch (SQLException e) {
-            showAlert("Please fill in all fields correctly");
-        }
-    }
-
-    // Update brand
-    public Brand updateBrand(String brandName) throws SQLException {
-        String brandQuery =
-                "SELECT * " +
-                "FROM brand " +
-                "WHERE brand = ?";
-        ResultSet brandResult = connection.query(brandQuery, brandName);
-
-        if (brandResult.next()) {
-            return new Brand(brandResult);
-        } else {
-            String insertBrandQuery =
-                    "INSERT INTO brand " +
-                    "(brand) VALUES (?)";
-            connection.updateQuery(insertBrandQuery, brandName);
-
-            ResultSet insertedBrandResult = connection.query(brandQuery, brandName);
-            insertedBrandResult.next();
-            return new Brand(insertedBrandResult);
-        }
-    }
-
-    // Update model
-    public Model updateModel(String modelName, Brand brand) throws SQLException {
-        String modelQuery =
-                "SELECT * " +
-                "FROM model " +
-                "WHERE model = ? AND brand_id = ?";
-        ResultSet modelResult = connection.query(modelQuery, modelName, brand.getBrand_id());
-
-        if (modelResult.next()) {
-            return new Model(modelResult);
-        }
-        else {
-            String insertModelQuery =
-                    "INSERT INTO model " +
-                    "(model, brand_id) VALUES (?, ?)";
-            connection.updateQuery(insertModelQuery, modelName, brand.getBrand_id());
-
-            ResultSet insertedModelResult = connection.query(modelQuery, modelName, brand.getBrand_id());
-            insertedModelResult.next();
-            return new Model(insertedModelResult);
-        }
     }
 
     // Show an alert

@@ -1,6 +1,7 @@
 package com.example.sneakerapplication.screens;
 
 import com.example.sneakerapplication.Application;
+import com.example.sneakerapplication.Database;
 import com.example.sneakerapplication.classes.User;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -9,17 +10,18 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import static com.example.sneakerapplication.Application.connection;
 import static com.example.sneakerapplication.Application.scenes;
 
 public class Login {
     private boolean loggedIn = false;
     private Scene loginScene;
+    private Database database;
 
     public Login() {
+        database = new Database();
+
         HBox root = new HBox();
         root.setId("root");
         root.setFillHeight(false);
@@ -92,7 +94,7 @@ public class Login {
         }
 
         try {
-            User loggedInUser = authenticateUser(username, password);
+            User loggedInUser = database.authenticateUser(username, password);
             if (loggedInUser != null) {
                 Application.setUser(loggedInUser);
                 loggedIn = true;
@@ -104,28 +106,6 @@ public class Login {
             System.out.println("An error occurred during login. Please try again.");
         }
         return false;
-    }
-
-    /**
-     * Authenticates the user with the provided username and password
-     * @param username the username to authenticate
-     * @param password the password to authenticate
-     */
-    private User authenticateUser(String username, String password) throws SQLException {
-        String query =
-                "SELECT * " +
-                "FROM user " +
-                "WHERE username = ? AND password = ?";
-
-        ResultSet resultSet = connection.query(query, username, password);
-        if (resultSet.next()) {
-            return new User(
-                    resultSet.getString("user_id"),
-                    resultSet.getString("username"),
-                    resultSet.getString("password")
-            );
-        }
-        return null;
     }
 
     // Show an alert

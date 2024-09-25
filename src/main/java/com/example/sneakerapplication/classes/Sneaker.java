@@ -4,9 +4,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class Sneaker {
-    private final String sneaker_id, image, user_id, model_id, size, release_date, purchase_date, price;
+    private final String image, size, release_date, purchase_date, price;
+    private final int sneaker_id, user_id, model_id;
 
-    public Sneaker(String sneaker_id, String image, String user_id, String model_id, String size, String release_date, String purchase_date, String price) {
+    public Sneaker(int sneaker_id, String image, int user_id, int model_id, String size, String release_date, String purchase_date, String price) {
         this.sneaker_id = sneaker_id;
         this.image = image;
         this.user_id = user_id;
@@ -18,17 +19,17 @@ public class Sneaker {
     }
 
     public Sneaker(ResultSet result) throws SQLException {
-        this.sneaker_id = result.getString("sneaker_id");
+        this.sneaker_id = result.getInt("sneaker_id");
         this.image = result.getString("image");
-        this.user_id = result.getString("user_id");
-        this.model_id = result.getString("model_id");
+        this.user_id = result.getInt("user_id");
+        this.model_id = result.getInt("model_id");
         this.size = result.getString("size");
         this.release_date = result.getString("release_date");
         this.purchase_date = result.getString("purchase_date");
         this.price = result.getString("price");
     }
 
-    public String getSneaker_id() {
+    public int getSneaker_id() {
         return sneaker_id;
     }
 
@@ -36,11 +37,11 @@ public class Sneaker {
         return image;
     }
 
-    public String getUser_id() {
+    public int getUser_id() {
         return user_id;
     }
 
-    public String getModel_id() {
+    public int getModel_id() {
         return model_id;
     }
 
