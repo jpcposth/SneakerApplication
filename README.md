@@ -43,7 +43,7 @@ Welcome to the Sneaker Application, a JavaFX-based application for managing your
 
 1. Launch the application.
 2. If you don't have an account, click the "Register" button on the login screen.
-3. Enter your desired username and password. (The passwords aren't encrypted, so don't use a commen used password)
+3. Enter your desired username and password.
 4. Click the "Register" button.
 
 ## Collection
