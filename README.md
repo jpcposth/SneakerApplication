@@ -28,7 +28,7 @@ Welcome to the Sneaker Application, a JavaFX-based application for managing your
 
 # Installation Instructions
 
-1. Go to https://github.com/jpcposth/SneakerApplication/releases
+1. Go to [https://github.com/jpcposth/SneakerApplication/releases](https://github.com/jpcposth/SneakerApplication/releases/download/v2.0/SneakerApplication.jar)
 2. Download the jar file (SneakerApplication.jar) 
 
 # Usage Guide
@@ -43,7 +43,7 @@ Welcome to the Sneaker Application, a JavaFX-based application for managing your
 
 1. Launch the application.
 2. If you don't have an account, click the "Register" button on the login screen.
-3. Enter your desired username and password. (The passwords aren't encrypted, so don't use a commen used password)
+3. Enter your desired username and password.
 4. Click the "Register" button.
 
 ## Collection
